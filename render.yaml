@@ -2,15 +2,13 @@ services:
   - type: web
     name: orbit-job-agent
     runtime: docker
-    plan: starter
+    plan: free
     healthCheckPath: /health
-    disk:
-      name: orbit-data
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
+      - key: EPHEMERAL_HOSTING
+        value: "true"
       - key: JOB_AGENT_DATA
         value: /var/data/orbit
       - key: PORT
@@ -21,7 +19,11 @@ services:
         sync: false
       - key: SIGNUP_CODE
         sync: false
-      - key: GOOGLE_CLIENT_ID
+      - key: SUPABASE_URL
         sync: false
-      - key: GOOGLE_CLIENT_SECRET
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: orbit-private
+      - key: CRON_SECRET
         sync: false

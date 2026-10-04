@@ -39,9 +39,9 @@ Human reply totals count each outreach record once. Multiple replies do not infl
 
 ## Hosted deployment
 
-See [DEPLOYMENT.md](DEPLOYMENT.md). Dockerfile and render.yaml provide a single-server deployment with persistent storage. Render supplies a project-named onrender.com address without ChatGPT in the URL. The blueprint selects a paid Starter service and paid persistent disk: review current pricing before provisioning.
+See [DEPLOYMENT.md](DEPLOYMENT.md). Dockerfile and render.yaml target Render Free, encrypted private Supabase Storage, and scheduled GitHub Actions. Render supplies a project-named onrender.com address without ChatGPT in the URL. Hosting uses free tiers with cold starts, quotas and best-effort scheduling; no paid resources are provisioned.
 
-Hosted mode requires HTTPS APP_URL, persistent JOB_AGENT_DATA and a stable 64-character hexadecimal VAULT_KEY. It binds to 0.0.0.0 and requires sign-in. Set SIGNUP_CODE for a controlled launch. Users supply their own API keys; hosted accounts never inherit the server key. Hosted Gmail uses a Web application OAuth client with the exact APP_URL/oauth/callback redirect. Broad distribution may require Google OAuth verification.
+Hosted mode requires HTTPS APP_URL, durable cloud storage or persistent JOB_AGENT_DATA and a stable 64-character hexadecimal VAULT_KEY. It binds to 0.0.0.0 and requires sign-in. Set SIGNUP_CODE for a controlled launch. Users supply their own API keys; hosted accounts never inherit the server key. Hosted Gmail uses a Web application OAuth client with the exact APP_URL/oauth/callback redirect. Broad distribution may require Google OAuth verification.
 
 ## Data and privacy
 
@@ -53,7 +53,7 @@ Export in Settings and disconnect Gmail to revoke access. Account deletion and p
 
 ## Verification
 
-Run `npm test`: 25 checks cover approvals, duplicate sends, MIME, scheduling, mocked Gmail, conversational actions, authentication, account isolation and encrypted credentials. See [VERIFICATION.md](VERIFICATION.md). `npm run check-access` performs a bounded paid agent check.
+Run `npm test`: 28 checks cover approvals, duplicate sends, MIME, scheduling, mocked Gmail, conversational actions, authentication, account isolation, encrypted credentials and atomic cloud snapshots. See [VERIFICATION.md](VERIFICATION.md). `npm run check-access` performs a bounded paid agent check.
 
 Successful live AI tasks and a real Gmail send/reply cycle remain unverified pending funded API access and a connected mailbox. This package is a controlled-launch implementation, not a claim of production certification.
 
@@ -62,3 +62,9 @@ Successful live AI tasks and a real Gmail send/reply cycle remain unverified pen
 server.mjs serves the UI/API; chat.mjs validates plans; agent.mjs calls hosted agents; service.mjs implements outreach; gmail.mjs handles OAuth/Gmail; scheduler.mjs handles discovery; workspace.mjs, auth.mjs and store.mjs manage account data. Browser code is in public/ and checks in test/.
 
 Official references: [Agents API](https://developers.openai.com/api/docs/guides/agents-api/quickstart), [Gmail drafts](https://developers.google.com/workspace/gmail/api/guides/drafts), [Google OAuth](https://developers.google.com/identity/protocols/oauth2/web-server), [Render disks](https://render.com/docs/disks).
+
+
+
+## Interface
+
+![Orbit conversational workspace](docs/conversation.jpg)

@@ -1,18 +1,22 @@
-# Deploy Orbit
+# Free deployment
 
-The Render blueprint creates orbit-job-agent on a **paid Starter service with a 1 GB persistent disk**. Confirm the displayed current service/disk costs before creating it. The project-named onrender.com address is free; server and storage costs are separate.
+Orbit now targets Render Free + private Supabase Storage + scheduled GitHub Actions. No paid service or disk is provisioned by render.yaml. AI usage is separately billed by each user's API provider.
 
-1. Connect this repository to Render and create a Blueprint from render.yaml. Review billing before provisioning.
-2. Set APP_URL to the assigned HTTPS address without trailing slash. Set VAULT_KEY to 32 cryptographically random bytes encoded as 64 hex characters. Keep it in secret environment settings and a secure backup; losing it makes credentials unreadable. Never commit it.
-3. Set private SIGNUP_CODE for invite registration. JOB_AGENT_DATA=/var/data/orbit must be on the mounted persistent disk. Use one instance/process.
-4. Create a Google Web application OAuth client with redirect https://YOUR-ORBIT-ADDRESS/oauth/callback, configure consent/test users and enable Gmail API. Configure GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET, or have each user upload their own Web OAuth client JSON. Do not share a personal API key across tenants.
-5. Verify /health, login, two separate accounts, encrypted keys, Gmail connection and one reviewed draft/send/reply cycle. Confirm data survives restart. Publish operator contact details before broad registration.
-6. Back up the disk and vault key under restricted access; test restoration. Monitor failed tasks, quota errors, refresh failures and agent-session cleanup.
+1. Create a free Supabase project dedicated to Orbit. Create a **private** bucket named orbit-private with no public policies. Keep the server secret key out of browsers and source control.
+2. Deploy this repository on Render using render.yaml. Choose Free. Set APP_URL to the exact assigned HTTPS address and configure SUPABASE_URL, SUPABASE_SECRET_KEY, SUPABASE_BUCKET=orbit-private, VAULT_KEY (32 random bytes encoded as 64 hex characters), SIGNUP_CODE and CRON_SECRET. Set JOB_AGENT_DATA=/var/data/orbit; in cloud mode this is an ephemeral cache, restored from encrypted storage at startup.
+3. Back up VAULT_KEY securely: loss makes cloud data unreadable. Use one service instance/process per bucket. Never run two deployments against the same bucket. Each changed file is uploaded as an encrypted version, then a manifest is committed; failure before manifest commit leaves the previous data authoritative. State is persisted before AI calls and Gmail create/send side effects, and before successful mutation responses.
+4. In GitHub repository Settings, set Actions variable ORBIT_URL to the assigned address and secret ORBIT_CRON_SECRET to the same CRON_SECRET. The discovery workflow wakes the app every two hours at minute 17, runs searches that are due, and checks replies. It can be triggered manually. Tasks can run late: GitHub schedules are best effort and may be delayed; inactive public repositories may have schedules disabled. Exact-time or continuous polling is not guaranteed on free hosting.
+5. Create a Google Web application OAuth client with APP_URL/oauth/callback as its redirect; enable Gmail API and configure test users/verification. Each user can upload their own client JSON in Settings. Connect their funded API key and Gmail account.
+6. Verify two-user isolation, cold-start restoration, profile/document persistence, AI discovery and a reviewed draft/send/reply cycle on the live host before inviting friends. Publish operator contact details and account removal/recovery procedures.
 
-## Docker alternative
+## Free-tier limits
 
-Build the Dockerfile, mount persistent storage at /var/data and inject the same environment values. A reverse proxy must terminate HTTPS and preserve Host matching APP_URL; health checks use this validation too. Never expose local mode publicly.
+Render Free sleeps after 15 idle minutes; cold starts take about a minute. It has shared free service-hour, bandwidth and build quotas and may suspend services. Supabase Free includes limited storage/egress and may pause inactive projects. Disable paid upgrades/overage settings where available and monitor quotas. No host account or paid resources are created automatically by running this app. Free tiers are suitable for a small controlled launch, not a production uptime guarantee.
 
-## Broad release requirements
+Cloud copies encrypt all workspace files using AES-256-GCM. Local cache files remain readable by the server operator. Restarts fail interrupted tasks for review rather than retrying uncertain sends. Storage cleanup failures log a warning; review orphaned encrypted versions and quota use. Keep secure independent backups of the private bucket plus vault key.
 
-Complete applicable Google OAuth verification, publish operator/data handling details, establish account recovery/deletion support, verify live integrations, test restoration and obtain a security review. These external requirements are not completed by the source package.
+## Local or persistent-disk alternative
+
+Without SUPABASE_URL the app uses local disk as before. For a self-hosted HTTPS deployment mount persistent storage and configure APP_URL/VAULT_KEY; paid persistent hosting is optional and was not approved for this delivery. Local mode must not be exposed publicly.
+
+References: https://render.com/docs/free, https://supabase.com/pricing, https://supabase.com/docs/guides/storage/buckets/creating-buckets, https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows.

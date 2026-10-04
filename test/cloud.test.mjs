@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+process.env.JOB_AGENT_DATA=fs.mkdtempSync(path.join(os.tmpdir(),'orbit-cloud-test-'));
+process.env.SUPABASE_URL='https://orbit-test.supabase.co';
+process.env.SUPABASE_SECRET_KEY='sb_secret_test';
+process.env.VAULT_KEY='b'.repeat(64);
+const {DATA}=await import('../config.mjs');
+const {encryptFile,decryptFile,safeFile,restoreCloud,flushCloud}=await import('../cloud.mjs');
+const remote=new Map();let rejectManifest=false;
+globalThis.fetch=async(url,options={})=>{const name=new URL(url).pathname.split('/').slice(5).join('/');if(options.method==='DELETE'){for(const key of JSON.parse(options.body).prefixes)remote.delete(key);return new Response('{}');}if(options.method==='POST'){if(name==='manifest'&&rejectManifest)return new Response('{}',{status:503});remote.set(name,Buffer.from(options.body));return new Response('{}');}const bytes=remote.get(name);return bytes?new Response(bytes):new Response(JSON.stringify({statusCode:'404'}),{status:400});};
+test('encrypted objects reject tampering and unsafe restore paths',()=>{const source=Buffer.from('private resume'),sealed=encryptFile(source);assert.ok(!sealed.includes(source));assert.deepEqual(decryptFile(sealed),source);sealed[sealed.length-1]^=1;assert.throws(()=>decryptFile(sealed));for(const value of ['../key','/root','a\\b','a/../b'])assert.throws(()=>safeFile(value));});
+test('cloud commit restores accounts and documents and does not commit partial uploads',async()=>{await restoreCloud();fs.writeFileSync(path.join(DATA,'accounts.json'),'private accounts');fs.mkdirSync(path.join(DATA,'users','a','documents'),{recursive:true});fs.writeFileSync(path.join(DATA,'users','a','documents','cv'),'private document');await flushCloud();const committed=Buffer.from(remote.get('manifest'));fs.writeFileSync(path.join(DATA,'accounts.json'),'new accounts');rejectManifest=true;await assert.rejects(flushCloud());assert.deepEqual(remote.get('manifest'),committed);rejectManifest=false;await restoreCloud();assert.equal(fs.readFileSync(path.join(DATA,'accounts.json'),'utf8'),'private accounts');assert.equal(fs.readFileSync(path.join(DATA,'users','a','documents','cv'),'utf8'),'private document');fs.writeFileSync(path.join(DATA,'accounts.json'),'final accounts');await flushCloud();await restoreCloud();assert.equal(fs.readFileSync(path.join(DATA,'accounts.json'),'utf8'),'final accounts');});

@@ -8,6 +8,7 @@ import {read,write,audit} from './store.mjs';
 import {id,hash,email,required,safeURL,mime,assertSend,header,bodyText,autoCategory} from './core.mjs';
 import {runAgent,profileData,jobTask,draftTask,replyTask,feedbackTask} from './agent.mjs';
 import * as mail from './gmail.mjs';
+import {flushCloud} from './cloud.mjs';
 const now=()=>new Date().toISOString();
 const attachmentDir=()=>{const dir=path.join(dataDir(),'documents');fs.mkdirSync(dir,{recursive:true});return dir;};
 export async function verifyPreview(item,raw,documents){
@@ -45,7 +46,7 @@ export async function createDraft(jobId,attachmentIds,port){
  const result=await runAgent(draftTask,{...profileData(s),job:j});
  const g=mail.gmail(port),profile=await g.users.getProfile({userId:'me'}),from=profile.data.emailAddress;
  const item={id:id(),jobId,to:j.contactEmail,subject:required(result.subject,'Subject',500),body:required(result.body,'Body',20000),claims:Array.isArray(result.claims)?result.claims:[],attachmentIds:attachments.map(a=>a.id),status:'creating',replies:[],createdAt:now(),from,messageId:id()+'@job-outreach.local'};
- item.raw=mime(item,from,attachments);s.outreach.push(item);audit(s,'draft_creation_started',{outreachId:item.id});
+ item.raw=mime(item,from,attachments);s.outreach.push(item);audit(s,'draft_creation_started',{outreachId:item.id});await flushCloud();
  try{const draft=await g.users.drafts.create({userId:'me',requestBody:{message:{raw:item.raw}}});item.gmailDraftId=draft.data.id;write(s);const canonical=await g.users.drafts.get({userId:'me',id:item.gmailDraftId,format:'raw'});item.raw=await verifyPreview(item,canonical.data.message.raw,s.documents);item.status='draft';audit(s,'draft_created',{outreachId:item.id});return item;}
  catch(e){item.status='draft_unknown';audit(s,'draft_creation_unknown',{outreachId:item.id});throw Error('Gmail draft creation did not confirm. Check Gmail before creating another draft.');}
 }
@@ -62,7 +63,7 @@ export async function sendApproved(ids,port){
   try{
    if(!item)throw Error('Outreach not found.');const profile=await g.users.getProfile({userId:'me'});if(profile.data.emailAddress!==item.from)throw Error('Gmail account differs from the draft owner.');
    const draft=await g.users.drafts.get({userId:'me',id:item.gmailDraftId,format:'raw'});assertSend(item,draft.data.message.raw,s);
-   item.status='sending';item.sendAttemptAt=now();audit(s,'send_started',{outreachId});
+   item.status='sending';item.sendAttemptAt=now();audit(s,'send_started',{outreachId});await flushCloud();
    try{const sent=await g.users.drafts.send({userId:'me',requestBody:{id:item.gmailDraftId,message:{raw:item.raw}}});item.status='sent';item.sentAt=now();item.gmailMessageId=sent.data.id;item.gmailThreadId=sent.data.threadId;audit(s,'sent',{outreachId});results.push({id:outreachId,status:'sent'});}
    catch{item.status='send_unknown';audit(s,'send_unknown',{outreachId});results.push({id:outreachId,status:'send_unknown',error:'Delivery result is unknown. Sync to reconcile; do not retry.'});break;}
    await new Promise(resolve=>setTimeout(resolve,2000));

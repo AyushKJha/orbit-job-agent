@@ -11,8 +11,11 @@ import * as auth from './auth.mjs';
 import {inWorkspace,apiKey,modelName,saveSecrets,seal} from './workspace.mjs';
 import {runDailySearch,searchReadiness} from './scheduler.mjs';
 import {converse} from './chat.mjs';
+import {restoreCloud,flushCloud} from './cloud.mjs';
+await restoreCloud();
 const port=Number(process.env.PORT||8765),hosted=Boolean(process.env.APP_URL),origin=process.env.APP_URL?.replace(/\/$/,'')||'http://127.0.0.1:'+port,localToken=crypto.randomBytes(32).toString('hex');
 if(process.env.NODE_ENV==='production'&&(!hosted||!origin.startsWith('https://')||!process.env.VAULT_KEY))throw Error('Production needs an HTTPS APP_URL and a 64-character hexadecimal VAULT_KEY.');
+if(process.env.EPHEMERAL_HOSTING==='true'&&!process.env.SUPABASE_URL)throw Error('Free ephemeral hosting requires durable cloud storage before accepting accounts.');
 if(process.env.NODE_ENV==='production')seal({startupCheck:true});
 const publicState=csrf=>{const s=read();return {...s,hosted,searchBlocker:searchReadiness(s,Boolean(apiKey())),outreach:s.outreach.map(({raw,...x})=>({...x,previewHash:hash(raw||'')})),audit:s.audit.slice(-100),stats:stats(s),connection:{googleConfigured:mail.configured(),gmailConnected:mail.connected(),apiConfigured:Boolean(apiKey()),model:modelName()},csrfToken:csrf};};
 const dailySearch=force=>runDailySearch({readState:read,saveState:write,search:service.searchJobs,hasKey:Boolean(apiKey()),force});
@@ -69,7 +72,8 @@ const server=http.createServer(async(req,res)=>{
   if(req.method==='GET'&&url.pathname==='/health'){json(res,{status:'ok',project:'Orbit'});return;}
   if(req.method==='GET'&&['/','/app.js','/style.css','/auth.js','/privacy'].includes(url.pathname)){const name=url.pathname==='/'?'index.html':url.pathname==='/privacy'?'privacy.html':url.pathname.slice(1);res.writeHead(200,{'Content-Type':name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html','Cache-Control':'no-cache','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"});res.end(fs.readFileSync(path.join(ROOT,'public',name)));return;}
   if(req.method==='GET'&&url.pathname==='/api/auth/me'){json(res,{hosted,user:current?.user||null,csrfToken:current?.csrf||null});return;}
-  if(req.method==='POST'&&['/api/auth/login','/api/auth/register'].includes(url.pathname)){if(!hosted)throw Error('Local mode does not require a login.');if(req.headers.origin!==origin)throw Error('Invalid origin.');const ip=req.socket.remoteAddress,rate=loginRates.get(ip);if(rate?.until>Date.now()&&rate.count>=40)throw Error('Too many authentication requests. Try again later.');loginRates.set(ip,{count:(rate?.until>Date.now()?rate.count:0)+1,until:Date.now()+900000});const result=await auth.authenticate(await body(req,4096),url.pathname.endsWith('/register'),ip);res.setHeader('Set-Cookie',auth.cookie(result.raw,origin.startsWith('https://')));json(res,{user:result.user});return;}
+  if(req.method==='POST'&&['/api/auth/login','/api/auth/register'].includes(url.pathname)){if(!hosted)throw Error('Local mode does not require a login.');if(req.headers.origin!==origin)throw Error('Invalid origin.');const ip=req.socket.remoteAddress,rate=loginRates.get(ip);if(rate?.until>Date.now()&&rate.count>=40)throw Error('Too many authentication requests. Try again later.');loginRates.set(ip,{count:(rate?.until>Date.now()?rate.count:0)+1,until:Date.now()+900000});const result=await auth.authenticate(await body(req,4096),url.pathname.endsWith('/register'),ip);await flushCloud();res.setHeader('Set-Cookie',auth.cookie(result.raw,origin.startsWith('https://')));json(res,{user:result.user});return;}
+  if(req.method==='POST'&&url.pathname==='/internal/schedule'){const expected=process.env.CRON_SECRET||'',provided=req.headers.authorization||'';if(!expected||!crypto.timingSafeEqual(crypto.createHash('sha256').update(provided).digest(),crypto.createHash('sha256').update('Bearer '+expected).digest())){json(res,{error:'Unauthorized'},401);return;}await tick();await flushCloud();json(res,{ok:true});return;}
   if(hosted&&!current){json(res,{error:'Sign in to your Orbit workspace.'},401);return;}
   const context=fn=>current?inWorkspace(current.user.id,fn):fn();
   await context(async()=>{
@@ -93,3 +97,4 @@ async function workspaceTick(){try{await dailySearch(false);}catch(e){console.er
 async function tick(){if(ticking)return;ticking=true;try{if(hosted){for(const user of auth.users()){try{await inWorkspace(user.id,()=>exclusive(workspaceTick));}catch(e){console.error('Workspace automation failed: '+String(e.message).replace(/sk-[\w-]+/g,'[redacted]'));}}}else await exclusive(workspaceTick);}catch(e){console.error('Automation failed: '+String(e.message).replace(/sk-[\w-]+/g,'[redacted]'));}finally{ticking=false;}}
 tick();const timer=setInterval(tick,60000);timer.unref();
 process.on('SIGTERM',()=>{clearInterval(timer);server.close();setTimeout(()=>process.exit(0),10000).unref();});
+
