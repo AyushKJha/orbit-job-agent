@@ -1,0 +1,1 @@
+{"name":"job-outreach-agent","version":"0.1.0","private":true,"type":"module","engines":{"node":">=24"},"scripts":{"start":"node server.mjs","test":"node --test test/*.test.mjs","check-access":"node check-access.mjs"},"dependencies":{"googleapis":"171.4.0","mailparser":"3.9.3","mammoth":"1.13.0","openai":"7.27.0","pdf-parse":"2.4.5"}}

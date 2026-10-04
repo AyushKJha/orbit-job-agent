@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'orbit-chat-test-'));process.env.JOB_AGENT_DATA=dir;
+const {converse,validateActions,quickPlan}=await import('../chat.mjs');const {read,write}=await import('../store.mjs');
+test('planner cannot grant itself sending, approval, credentials or arbitrary code',()=>{for(const type of ['send_email','approve_draft','execute_shell','change_key'])assert.throws(()=>validateActions({reply:'ok',actions:[{type}]},{jobs:[]}),/Unsupported/);assert.throws(()=>validateActions({reply:'ok',actions:[{type:'create_draft',jobIds:['invented']}]},{jobs:[]}),/unknown/);});
+test('simple stats command works without an AI API call and stores real receipts',async()=>{let calls=0;const response=await converse('Show my stats',{planner:async()=>{calls++;},execute:async a=>({sent:0,replied:0})});assert.equal(calls,0);assert.equal(response.actions[0].status,'completed');assert.equal(response.actions[0].result.sent,0);assert.equal(read().chat.length,2);});
+test('action failure stops remaining steps and never claims a completed result',async()=>{const response=await converse('Help me with a custom plan',{planner:async()=>({reply:'I will search and rank.',actions:[{type:'search_jobs'},{type:'rank_jobs'}]}),execute:async()=>{throw Error('No CV uploaded');}});assert.equal(response.actions.length,1);assert.equal(response.actions[0].status,'failed');assert.match(response.actions[0].error,/No CV/);});
+test('quick commands only match complete instructions',()=>{assert.equal(quickPlan('Show my stats and send all emails'),null);assert.equal(quickPlan('Pause daily discovery').actions[0].schedule.dailySearchEnabled,false);});
+test.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
