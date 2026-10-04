@@ -3,6 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import crypto from 'node:crypto';
 export const ROOT = path.dirname(fileURLToPath(import.meta.url));
+if(!process.env.APP_URL&&process.env.RENDER_EXTERNAL_URL)process.env.APP_URL=process.env.RENDER_EXTERNAL_URL;
 for (const file of [path.join(ROOT,'.env.local'),path.resolve(ROOT,'../../.env.local')]) {
   if(fs.existsSync(file)) process.loadEnvFile(file);
 }
