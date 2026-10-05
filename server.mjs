@@ -12,13 +12,15 @@ import {inWorkspace,apiKey,modelName,saveSecrets,seal} from './workspace.mjs';
 import {runDailySearch,searchReadiness} from './scheduler.mjs';
 import {converse} from './chat.mjs';
 import {restoreCloud,flushCloud} from './cloud.mjs';
+import {aiReady} from './agent.mjs';
+import {localMode,localModel,broker,workerAuthorized} from './local-ai.mjs';
 await restoreCloud();
 const port=Number(process.env.PORT||8765),hosted=Boolean(process.env.APP_URL),origin=process.env.APP_URL?.replace(/\/$/,'')||'http://127.0.0.1:'+port,localToken=crypto.randomBytes(32).toString('hex');
 if(process.env.NODE_ENV==='production'&&(!hosted||!origin.startsWith('https://')||!process.env.VAULT_KEY))throw Error('Production needs an HTTPS APP_URL and a 64-character hexadecimal VAULT_KEY.');
 if(process.env.EPHEMERAL_HOSTING==='true'&&!process.env.SUPABASE_URL&&!process.env.STORAGE_GATEWAY_URL)throw Error('Free ephemeral hosting requires durable cloud storage before accepting accounts.');
 if(process.env.NODE_ENV==='production')seal({startupCheck:true});
-const publicState=csrf=>{const s=read();return {...s,hosted,searchBlocker:searchReadiness(s,Boolean(apiKey())),outreach:s.outreach.map(({raw,...x})=>({...x,previewHash:hash(raw||'')})),audit:s.audit.slice(-100),stats:stats(s),connection:{googleConfigured:mail.configured(),gmailConnected:mail.connected(),apiConfigured:Boolean(apiKey()),model:modelName()},csrfToken:csrf};};
-const dailySearch=force=>runDailySearch({readState:read,saveState:write,search:service.searchJobs,hasKey:Boolean(apiKey()),force});
+const publicState=csrf=>{const s=read();return {...s,hosted,searchBlocker:searchReadiness(s,aiReady()),outreach:s.outreach.map(({raw,...x})=>({...x,previewHash:hash(raw||'')})),audit:s.audit.slice(-100),stats:stats(s),connection:{googleConfigured:mail.configured(),gmailConnected:mail.connected(),apiConfigured:aiReady(),model:localMode()?localModel():modelName(),provider:localMode()?'local':'openai',localStatus:localMode()?broker.status():null},csrfToken:csrf};};
+const dailySearch=force=>runDailySearch({readState:read,saveState:write,search:service.searchJobs,hasKey:aiReady(),force});
 function json(res,data,status=200){res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));}
 async function body(req,max=16000000){let length=0,chunks=[];for await(const chunk of req){length+=chunk.length;if(length>max)throw Error('Request too large.');chunks.push(chunk);}return JSON.parse(Buffer.concat(chunks).toString()||'{}');}
 function saveProfile(input){const s=read();s.profile={name:required(input.name,'Name',200),roles:required(input.roles,'Roles',1000),locations:String(input.locations||'').slice(0,1000),preferences:String(input.preferences||'').slice(0,3000),portfolio:input.portfolio?safeURL(input.portfolio):''};if(input.portfolio&&!s.profile.portfolio)throw Error('Use a public HTTPS portfolio URL.');audit(s,'profile_saved');return {saved:true};}
@@ -74,6 +76,14 @@ const server=http.createServer(async(req,res)=>{
   if(req.method==='GET'&&url.pathname==='/api/auth/me'){json(res,{hosted,user:current?.user||null,csrfToken:current?.csrf||null});return;}
   if(req.method==='POST'&&['/api/auth/login','/api/auth/register'].includes(url.pathname)){if(!hosted)throw Error('Local mode does not require a login.');if(req.headers.origin!==origin)throw Error('Invalid origin.');const ip=req.socket.remoteAddress,rate=loginRates.get(ip);if(rate?.until>Date.now()&&rate.count>=40)throw Error('Too many authentication requests. Try again later.');loginRates.set(ip,{count:(rate?.until>Date.now()?rate.count:0)+1,until:Date.now()+900000});const result=await auth.authenticate(await body(req,4096),url.pathname.endsWith('/register'),ip);await flushCloud();res.setHeader('Set-Cookie',auth.cookie(result.raw,origin.startsWith('https://')));json(res,{user:result.user});return;}
   if(req.method==='POST'&&url.pathname==='/internal/schedule'){const expected=process.env.CRON_SECRET||'',provided=req.headers.authorization||'';if(!expected||!crypto.timingSafeEqual(crypto.createHash('sha256').update(provided).digest(),crypto.createHash('sha256').update('Bearer '+expected).digest())){json(res,{error:'Unauthorized'},401);return;}await tick();await flushCloud();json(res,{ok:true});return;}
+  if(req.method==='POST'&&url.pathname.startsWith('/internal/worker/')){
+   if(process.env.AI_PROVIDER!=='local-worker'||!workerAuthorized(req.headers.authorization)){json(res,{error:'Unauthorized'},401);return;}
+   const input=await body(req,200000);
+   if(url.pathname==='/internal/worker/heartbeat'){broker.heartbeat(input.model);json(res,{ok:true});return;}
+   if(url.pathname==='/internal/worker/poll'){json(res,{job:broker.claim()});return;}
+   if(url.pathname==='/internal/worker/result'){json(res,{accepted:broker.finish(input.id,input.result,input.error)});return;}
+   json(res,{error:'Not found'},404);return;
+  }
   if(hosted&&!current){json(res,{error:'Sign in to your Orbit workspace.'},401);return;}
   const context=fn=>current?inWorkspace(current.user.id,fn):fn();
   await context(async()=>{

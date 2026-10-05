@@ -2,7 +2,7 @@
 
 [Open Orbit](https://orbit-job-agent.onrender.com) · Free hosted preview (invitation required)
 
-A standalone conversational job-search and Gmail outreach agent. Friends do not need Codex or ChatGPT Plus. AI features need their own funded OpenAI API account, and Gmail needs OAuth authorization.
+A standalone conversational job-search and Gmail outreach agent. Friends do not need Codex or ChatGPT Plus. AI can run through Ollama on the owner’s computer with no paid model API calls; optional OpenAI mode uses funded API access. Gmail needs OAuth authorization. See [local AI setup](LOCAL_AI.md).
 
 ## Features
 
@@ -55,7 +55,7 @@ Export in Settings and disconnect Gmail to revoke access. Account deletion and p
 
 ## Verification
 
-Run `npm test`: 32 checks cover approvals, duplicate sends, MIME, scheduling, mocked Gmail, conversational actions, authentication, account isolation, encrypted credentials and atomic cloud snapshots. See [VERIFICATION.md](VERIFICATION.md). `npm run check-access` performs a bounded paid agent check.
+Run `npm test`: 38 checks cover approvals, duplicate sends, MIME, scheduling, mocked Gmail, conversational actions, authentication, account isolation, encrypted credentials and atomic cloud snapshots. See [VERIFICATION.md](VERIFICATION.md). `npm run check-access` performs a bounded paid agent check.
 
 Successful live AI tasks and a real Gmail send/reply cycle remain unverified pending funded API access and a connected mailbox. This package is a controlled-launch implementation, not a claim of production certification.
 

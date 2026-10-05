@@ -1,5 +1,5 @@
 import {dayKey} from './core.mjs';
-export function searchReadiness(state,hasKey){if(!hasKey)return 'Add your OpenAI API key';if(!state.profile.roles?.trim())return 'Save your target roles';if(!state.documents.length)return 'Upload your CV or resume';return null;}
+export function searchReadiness(state,hasKey){if(!hasKey)return 'Connect AI in Settings (or start the local AI worker)';if(!state.profile.roles?.trim())return 'Save your target roles';if(!state.documents.length)return 'Upload your CV or resume';return null;}
 export function searchDue(state,now=new Date()){
  if(!state.settings.dailySearchEnabled)return false;
  const zone=state.settings.timezone,day=dayKey(now,zone);

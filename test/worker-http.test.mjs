@@ -1,0 +1,24 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {createHmac} from 'node:crypto';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'orbit-worker-http-')),origin='http://127.0.0.1:18878';let child;
+test.before(async()=>{child=spawn(process.execPath,['server.mjs'],{cwd:root,env:{...process.env,PORT:'18878',APP_URL:origin,JOB_AGENT_DATA:dir,NODE_ENV:'test',VAULT_KEY:'e'.repeat(64),AI_PROVIDER:'local-worker',CRON_SECRET:'worker-test'},stdio:['ignore','pipe','pipe']});await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Server startup timeout')),30000);child.stdout.on('data',x=>{if(String(x).includes('Job Outreach Agent')){clearTimeout(timer);resolve();}});child.once('error',reject);});});
+test('hosted prompts use the authenticated local worker with no paid API key',async()=>{
+ const auth='Bearer '+createHmac('sha256','worker-test').update('orbit-local-inference-worker-v1').digest('hex');
+ const worker=async(route,input={},token=auth)=>fetch(origin+'/internal/worker/'+route,{method:'POST',headers:{Authorization:token,'Content-Type':'application/json'},body:JSON.stringify(input)});
+ assert.equal((await worker('poll',{},'Bearer wrong')).status,401);
+ const register=await fetch(origin+'/api/auth/register',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({handle:'worker-test',password:'Synthetic long password 123'})});assert.equal(register.status,200);
+ const cookie=register.headers.get('set-cookie').split(';')[0],session=await fetch(origin+'/api/auth/me',{headers:{Cookie:cookie}}).then(r=>r.json());
+ const state=()=>fetch(origin+'/api/state',{headers:{Cookie:cookie}}).then(r=>r.json());assert.equal((await state()).connection.apiConfigured,false);
+ assert.equal((await worker('heartbeat',{model:'qwen3:4b'})).status,200);assert.equal((await state()).connection.apiConfigured,true);
+ const request=await fetch(origin+'/api/chat',{method:'POST',headers:{Origin:origin,Cookie:cookie,'X-App-Token':session.csrfToken,'Content-Type':'application/json'},body:JSON.stringify({message:'Please tell me my current outreach numbers',requestId:'local-test'})});assert.equal(request.status,200);
+ let job;for(let i=0;i<30;i++){job=(await (await worker('poll')).json()).job;if(job)break;await new Promise(r=>setTimeout(r,50));}assert.ok(job);assert.equal(job.data.request,'Please tell me my current outreach numbers');
+ assert.equal((await (await worker('result',{id:job.id,result:{reply:'Here are the workspace counts.',actions:[{type:'show_stats'}]}})).json()).accepted,true);
+ let s;for(let i=0;i<30;i++){s=await state();if(s.tasks[0].status==='completed')break;await new Promise(r=>setTimeout(r,50));}assert.equal(s.tasks[0].status,'completed');assert.equal(s.chat.at(-1).actions[0].result.sent,0);
+});
+test.after(async()=>{if(child&&child.exitCode===null)await new Promise(r=>{child.once('exit',r);child.kill();});fs.rmSync(dir,{recursive:true,force:true});});
