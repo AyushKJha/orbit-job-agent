@@ -16,6 +16,14 @@ Before increasing outreach volume: fund API access, connect Gmail, upload real m
 
 Release archives/source control exclude keys, credentials, documents, mail history, dependencies and test data.
 
-Free hosting now includes encrypted private-object snapshots and an external schedule. Tests cover tamper rejection, path traversal, restoration of accounts/documents, and failed manifest uploads leaving committed data intact. A synthetic encrypted upload/commit/restore test passed against the private Supabase bucket. The restricted gateway and Render deployment are not live yet. Gateway tests cover authentication, fixed-bucket access, invalid paths/methods, size limits, plaintext rejection, upstream error redaction, and client restoration without a project server key.
+Free hosting now includes encrypted private-object snapshots and an external schedule. Tests cover tamper rejection, path traversal, restoration of accounts/documents, and failed manifest uploads leaving committed data intact. A synthetic encrypted upload/commit/restore test passed against the private Supabase bucket. The restricted gateway and Render Free deployment are live at https://orbit-job-agent.onrender.com. Gateway tests cover authentication, fixed-bucket access, invalid paths/methods, size limits, plaintext rejection, upstream error redaction, and client restoration without a project server key.
 
 
+
+## Live deployment checks — 5 October 2026
+
+Gateway: anonymous requests returned 401, allowed encrypted manifest read returned 200, and cross-bucket paths returned 400. A synthetic encrypted file passed upload, commit, restore and cleanup through the gateway without a project server key on Render.
+
+Public app: HTTPS health passed; two synthetic accounts verified registration, anonymous rejection, tenant isolation, CSRF checks, profile persistence and a completed stats prompt. Render confirmed a service restart, after which browser sign-in restored the saved profile and conversation. Test accounts contain only synthetic data.
+
+GitHub Actions ORBIT_URL is configured; wake-ups run every two hours and the app checks each user’s due schedule. Live AI and Gmail remain subject to the limitations above.

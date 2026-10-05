@@ -1,5 +1,7 @@
 # Orbit
 
+[Open Orbit](https://orbit-job-agent.onrender.com) · Free hosted preview (invitation required)
+
 A standalone conversational job-search and Gmail outreach agent. Friends do not need Codex or ChatGPT Plus. AI features need their own funded OpenAI API account, and Gmail needs OAuth authorization.
 
 ## Features
