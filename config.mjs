@@ -8,6 +8,6 @@ for (const file of [path.join(ROOT,'.env.local'),path.resolve(ROOT,'../../.env.l
   if(fs.existsSync(file)) process.loadEnvFile(file);
 }
 const baseData=process.env.JOB_AGENT_DATA || path.join(ROOT,'data');
-export const DATA = process.env.SUPABASE_URL?path.join(baseData,'cache-'+crypto.randomUUID()):baseData;
+export const DATA = (process.env.STORAGE_GATEWAY_URL||process.env.SUPABASE_URL)?path.join(baseData,'cache-'+crypto.randomUUID()):baseData;
 fs.mkdirSync(DATA,{recursive:true});
 export const MODEL = process.env.OPENAI_MODEL || 'gpt-6-astra';

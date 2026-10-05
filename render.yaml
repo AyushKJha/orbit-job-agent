@@ -13,17 +13,13 @@ services:
         value: /var/data/orbit
       - key: PORT
         value: 10000
-      - key: APP_URL
-        sync: false
       - key: VAULT_KEY
         sync: false
       - key: SIGNUP_CODE
         sync: false
-      - key: SUPABASE_URL
+      - key: STORAGE_GATEWAY_URL
         sync: false
-      - key: SUPABASE_SECRET_KEY
+      - key: STORAGE_GATEWAY_TOKEN
         sync: false
-      - key: SUPABASE_BUCKET
-        value: orbit-private
       - key: CRON_SECRET
         sync: false

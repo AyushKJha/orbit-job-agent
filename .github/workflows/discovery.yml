@@ -14,12 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Wake Orbit and run due searches and reply checks
+      - name: Wake Orbit for due searches and reply checks
         env:
           ORBIT_URL: ${{ vars.ORBIT_URL }}
-          CRON_SECRET: ${{ secrets.ORBIT_CRON_SECRET }}
         run: |
-          test -n "$CRON_SECRET"
-          curl --fail --silent --show-error --max-time 1200 \
-            --request POST --header "Authorization: Bearer $CRON_SECRET" \
-            "$ORBIT_URL/internal/schedule"
+          curl --fail --silent --show-error --max-time 240 "$ORBIT_URL/health"

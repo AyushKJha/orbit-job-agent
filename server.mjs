@@ -15,7 +15,7 @@ import {restoreCloud,flushCloud} from './cloud.mjs';
 await restoreCloud();
 const port=Number(process.env.PORT||8765),hosted=Boolean(process.env.APP_URL),origin=process.env.APP_URL?.replace(/\/$/,'')||'http://127.0.0.1:'+port,localToken=crypto.randomBytes(32).toString('hex');
 if(process.env.NODE_ENV==='production'&&(!hosted||!origin.startsWith('https://')||!process.env.VAULT_KEY))throw Error('Production needs an HTTPS APP_URL and a 64-character hexadecimal VAULT_KEY.');
-if(process.env.EPHEMERAL_HOSTING==='true'&&!process.env.SUPABASE_URL)throw Error('Free ephemeral hosting requires durable cloud storage before accepting accounts.');
+if(process.env.EPHEMERAL_HOSTING==='true'&&!process.env.SUPABASE_URL&&!process.env.STORAGE_GATEWAY_URL)throw Error('Free ephemeral hosting requires durable cloud storage before accepting accounts.');
 if(process.env.NODE_ENV==='production')seal({startupCheck:true});
 const publicState=csrf=>{const s=read();return {...s,hosted,searchBlocker:searchReadiness(s,Boolean(apiKey())),outreach:s.outreach.map(({raw,...x})=>({...x,previewHash:hash(raw||'')})),audit:s.audit.slice(-100),stats:stats(s),connection:{googleConfigured:mail.configured(),gmailConnected:mail.connected(),apiConfigured:Boolean(apiKey()),model:modelName()},csrfToken:csrf};};
 const dailySearch=force=>runDailySearch({readState:read,saveState:write,search:service.searchJobs,hasKey:Boolean(apiKey()),force});
