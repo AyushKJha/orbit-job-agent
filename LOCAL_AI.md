@@ -24,3 +24,7 @@ Local models do not inherently browse the web. Local discovery downloads Arbeitn
 Input is bounded to fit the local context window; long documents are marked as truncated, so a review is not a guarantee that every page was examined. Model output is validated by existing action and email-approval controls. Gmail still requires a Google OAuth connection independently of the AI provider.
 
 Sources: https://docs.ollama.com/windows, https://docs.ollama.com/api/chat, https://ollama.com/library/qwen3:4b, https://www.arbeitnow.com/blog/job-board-api.
+
+## Operator startup
+
+On the configured Windows computer, Orbit Local AI starts at Windows sign-in through an **Orbit Local AI** Startup shortcut. The delivered `Start-Orbit-Local-AI.ps1` and `Stop-Orbit-Local-AI.ps1` scripts provide manual controls. Removing the shortcut from the Windows Startup folder disables automatic startup. Keep the computer awake and connected; the website cannot wake it. Stopping the worker does not stop Ollama used by other applications.

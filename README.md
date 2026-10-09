@@ -25,7 +25,7 @@ npm install
 npm start
 ```
 
-Open http://127.0.0.1:8765. Windows users can use Start.cmd. Local mode binds to loopback and needs no Orbit login. In Settings save your own API key and choose a model; changes take effect immediately. API usage is separately billed and is not included in ChatGPT subscriptions.
+Open http://127.0.0.1:8765. Windows users can use Start.cmd. Local mode binds to loopback and needs no Orbit login. For free local inference, follow [LOCAL_AI.md](LOCAL_AI.md). Optional OpenAI mode requires a separately funded API key in Settings.
 
 Save your profile and upload application materials. Enable Gmail API in a Google Cloud project, configure its OAuth audience/test users, create a Desktop app OAuth client, download its JSON, upload it in Settings and connect Gmail.
 
@@ -49,15 +49,15 @@ Hosted mode requires HTTPS APP_URL, durable cloud storage or persistent JOB_AGEN
 
 Passwords use salted scrypt hashes. API keys and Gmail tokens are AES-256-GCM encrypted. Application content is stored as plain JSON/files; protect disk access and backups. The operator controls the vault key and can access data. This implementation supports one server process, not distributed writes.
 
-AI tasks send relevant materials/messages to the user's OpenAI project. Gmail scopes are gmail.readonly and gmail.compose; the app reads tracked threads and searches Sent for reconciliation. Agent sessions are deleted after tasks when possible; cleanup failures are recorded. Provider retention policies apply.
+In local mode, AI tasks send relevant materials/messages to the operator’s computer. Optional OpenAI mode sends them to the user’s OpenAI project. Gmail scopes are gmail.readonly and gmail.compose; the app reads tracked threads and searches Sent for reconciliation. Agent sessions are deleted after tasks when possible; cleanup failures are recorded. Provider retention policies apply.
 
 Export in Settings and disconnect Gmail to revoke access. Account deletion and password recovery require operator support. Publish operator identity/contact in the privacy notice before broad launch. Never commit/distribute .env.local, data/, tokens, documents or email history. See [SECURITY.md](SECURITY.md).
 
 ## Verification
 
-Run `npm test`: 38 checks cover approvals, duplicate sends, MIME, scheduling, mocked Gmail, conversational actions, authentication, account isolation, encrypted credentials and atomic cloud snapshots. See [VERIFICATION.md](VERIFICATION.md). `npm run check-access` performs a bounded paid agent check.
+Run `npm test`: 39 checks cover approvals, duplicate sends, MIME, scheduling, mocked Gmail, conversational actions, authentication, account isolation, encrypted credentials and atomic cloud snapshots. See [VERIFICATION.md](VERIFICATION.md). `npm run check-access` performs a bounded paid agent check.
 
-Successful live AI tasks and a real Gmail send/reply cycle remain unverified pending funded API access and a connected mailbox. This package is a controlled-launch implementation, not a claim of production certification.
+Local model draft generation, classification, and a hosted prompt round trip have been demonstrated. A real Gmail send/reply cycle remains unverified pending mailbox connection. This package is a controlled-launch implementation, not a claim of production certification.
 
 ## Structure
 
@@ -70,3 +70,12 @@ Official references: [Agents API](https://developers.openai.com/api/docs/guides/
 ## Interface
 
 ![Orbit conversational workspace](docs/conversation.jpg)
+
+## Gmail setup
+
+1. In your Google Cloud project, enable the Gmail API and configure the OAuth consent screen. For a testing app, add your Gmail address as a test user.
+2. For the public Orbit website, create a Web application OAuth client with `https://orbit-job-agent.onrender.com/oauth/callback` as its authorized redirect URI. For loopback-only Orbit, use a Desktop client.
+3. Download the client JSON. In Orbit → Settings, upload it and click **Connect Gmail**. Complete Google’s consent flow yourself.
+4. Return to Orbit and confirm **Gmail connected**. Add a real job and a verified recruiting contact, create one draft, and inspect its exact content and attachments before approving it.
+
+Connecting Gmail does not authorize automatic sending. Orbit sends only the selected drafts you explicitly approve. Google may require app verification for wider distribution; local AI does not remove Gmail’s OAuth requirements.

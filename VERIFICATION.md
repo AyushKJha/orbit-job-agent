@@ -1,29 +1,19 @@
 # Verification
 
-Checked 5 October 2026, Node.js 24 on Windows: **32 tests passed, zero failed**. Windows sandbox restrictions blocked atomic replacement of temporary test files; the suite passed outside that sandbox.
+Checked 10 October 2026 with Node.js 24 on Windows: **39 tests passed, zero failed**.
 
-Coverage: exact approvals/stale previews; remote/hidden Gmail draft edits; suppression/duplicate sends; timezone caps/uncertain attempts; MIME/attachments; reply extraction/counts; mocked sends and reconciliation; TXT import; job/contact confirmation; settings/request validation; persisted daily attempts/failures; URL deduplication/sorting; planner restrictions and receipts; hosted authentication, anonymous rejection, CSRF, tenant isolation, encrypted keys and idempotent chat submissions.
+Coverage includes exact draft approvals, stale previews, remote Gmail edits, duplicate/uncertain sends, MIME attachments, reply counts, scheduling, authentication, CSRF, account isolation, encrypted storage, restricted storage gateway, local worker authentication/queues, fixed-source job discovery, structured local responses, and conversational receipts. Gmail tests use mocks; no real outreach was sent.
 
-The updated prompt interface was checked in-browser. `Show my outreach stats` completed and displayed real workspace counts. Dark dashboard desktop/narrow layouts were also checked.
+## Real local inference
 
-## Live limitations
+Qwen3 4B through Ollama generated an outreach draft, classified a positive reply, and completed a hosted prompt in earlier checks. The revised reviewer returns nonempty structured recommendations. Small-model advice still needs human review: tests exposed suggested resume wording for missing skills. Review instructions now request future work and the UI explicitly requires completing/verifying work before claiming achievements. This is mitigation, not a guarantee of factual accuracy.
 
-The initial agent check returned usage_limit_exceeded; its session was deleted. Successful AI discovery, planning, generation and classification have not been demonstrated with that account. Gmail authorization and sending have not been tested with a real mailbox; Gmail checks are mocked. No outreach emails were sent.
+## Interface
 
-PDF/DOCX import is implemented; HTTP coverage uses TXT. OCR is not included. Cloud proxy behavior, disk permissions, restart persistence and OAuth redirects need verification on the chosen host. No independent security audit or Google OAuth verification is completed. Account recovery/deletion needs operator support. Storage supports a single server process.
+Browser checks covered the prompt workspace at desktop and 390px phone width, readiness checklist navigation, and Gmail setup guidance. Dark styling, reduced-motion support, focus indicators, a skip link, and larger mobile inputs are included.
 
-Before increasing outreach volume: fund API access, connect Gmail, upload real materials, search, create one draft, review/approve/send it and verify a tracked reply. Test backups/restoration before accepting other people's data.
+## Remaining external setup and limits
 
-Release archives/source control exclude keys, credentials, documents, mail history, dependencies and test data.
+A real Gmail OAuth connection and send/reply cycle remain unverified. Users must supply an appropriate Google client and complete consent. The operator computer must stay awake for local inference; startup is configured at Windows sign-in. Free job discovery is limited to the Europe-focused Arbeitnow feed; manual listings are supported. Free hosting can sleep and scheduling is best-effort.
 
-Free hosting now includes encrypted private-object snapshots and an external schedule. Tests cover tamper rejection, path traversal, restoration of accounts/documents, and failed manifest uploads leaving committed data intact. A synthetic encrypted upload/commit/restore test passed against the private Supabase bucket. The restricted gateway and Render Free deployment are live at https://orbit-job-agent.onrender.com. Gateway tests cover authentication, fixed-bucket access, invalid paths/methods, size limits, plaintext rejection, upstream error redaction, and client restoration without a project server key.
-
-
-
-## Live deployment checks — 5 October 2026
-
-Gateway: anonymous requests returned 401, allowed encrypted manifest read returned 200, and cross-bucket paths returned 400. A synthetic encrypted file passed upload, commit, restore and cleanup through the gateway without a project server key on Render.
-
-Public app: HTTPS health passed; two synthetic accounts verified registration, anonymous rejection, tenant isolation, CSRF checks, profile persistence and a completed stats prompt. Render confirmed a service restart, after which browser sign-in restored the saved profile and conversation. Test accounts contain only synthetic data.
-
-GitHub Actions ORBIT_URL is configured; wake-ups run every two hours and the app checks each user’s due schedule. Live AI and Gmail remain subject to the limitations above.
+No independent security audit or Google OAuth verification has been completed. Account recovery/deletion requires operator support. Storage supports one server process. OCR is not included.

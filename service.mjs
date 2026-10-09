@@ -100,4 +100,4 @@ export async function syncReplies(port){
  }
  s.lastSyncAt=now();audit(s,'replies_synced',{newReplies,errors});return {newReplies,errors};
 }
-export async function suggestions(){const s=read();const result=await runAgent(feedbackTask,{...profileData(s),jobs:s.jobs,outreach:s.outreach.map(x=>({id:x.id,jobId:x.jobId,subject:x.subject,body:x.body,sentAt:x.sentAt,replies:x.replies}))});if(!Array.isArray(result.recommendations)||typeof result.summary!=='string')throw Error('Invalid improvement report.');s.suggestions={...result,at:now()};audit(s,'suggestions_generated');return s.suggestions;}
+export async function suggestions(){const s=read();const result=await runAgent(feedbackTask,{...profileData(s),jobs:s.jobs,outreach:s.outreach.map(x=>({id:x.id,jobId:x.jobId,subject:x.subject,body:x.body,sentAt:x.sentAt,replies:x.replies}))});if(!Array.isArray(result.recommendations)||typeof result.summary!=='string'||!result.summary.trim())throw Error('Invalid improvement report.');s.suggestions={...result,at:now()};audit(s,'suggestions_generated');return s.suggestions;}
