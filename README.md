@@ -11,6 +11,8 @@ Orbit brings job discovery, application materials, drafts, and reply tracking in
 
 ![Orbit conversational workspace](docs/conversation.jpg)
 
+> **[Step-by-step user guide (PDF)](docs/USER_GUIDE.pdf)**
+
 ## Workflow
 
 1. Add your profile and import application materials.
