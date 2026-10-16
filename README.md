@@ -11,8 +11,6 @@ Orbit brings job discovery, application materials, drafts, and reply tracking in
 
 ![Orbit conversational workspace](docs/conversation.jpg)
 
-> **[Step-by-step user guide (PDF)](docs/USER_GUIDE.pdf)**
-
 ## Workflow
 
 1. Add your profile and import application materials.
@@ -22,6 +20,16 @@ Orbit brings job discovery, application materials, drafts, and reply tracking in
 5. Review replies and correct their classifications where needed.
 
 The planner cannot approve or send emails. Editing a draft invalidates its approval. Duplicate checks, suppression, send limits, and uncertain-send reconciliation help keep outreach reviewable.
+
+## First use
+
+1. Start the local server and open the address below. Add your profile and import a résumé or other application materials.
+2. Configure the local model using [LOCAL_AI.md](LOCAL_AI.md), or configure another supported provider. Connect Gmail only after setting up a Google Cloud OAuth client and reviewing the requested permissions.
+3. Ask Orbit to discover roles. Open each result to inspect its source, fit estimate, and missing qualifications; correct the profile when needed.
+4. Ask for application materials or an outreach draft. Confirm the recipient and review the full message and attachments.
+5. Approve the exact draft before sending. Review replies and correct their classifications in the workspace.
+
+The hosted preview is invitation-only. Job-fit estimates and reply classifications need human review, and live AI/Gmail end-to-end behavior has not been verified in this repository.
 
 ## Run locally
 
