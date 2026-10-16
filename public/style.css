@@ -20,3 +20,38 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #bc
 @media(max-width:600px){.readiness{padding:16px}.readiness-steps{grid-template-columns:repeat(2,1fr)}.header-actions{flex-wrap:wrap;justify-content:flex-end}header{height:auto;min-height:64px;padding-top:10px;padding-bottom:10px;gap:8px}.auth-overlay{align-items:start}.auth-card{margin:auto 0}input,select,textarea,.composer textarea{font-size:16px}nav button{min-height:42px}.composer-wrap{padding-bottom:max(10px,env(safe-area-inset-bottom))}.sectionhead>div{min-width:0}.sectionhead button{margin-top:8px}.cardtop{flex-wrap:wrap}}
 
 .assistant-intro{padding-top:22px;padding-bottom:24px}.assistant-star{margin-bottom:8px}.prompt-suggestions{margin-top:24px}.assistant-intro h1{margin-top:10px}.readiness{margin-bottom:24px}
+
+/* Orbit's original lamp-lit sign-in scene, inspired by the idea of interactive light. */
+.auth-overlay{--beam-strength:.48;--lamp-focus:50% 48%;background:radial-gradient(ellipse at var(--lamp-focus),#28382f 0,#121a1c 35%,#090c12 78%);transition:background .45s ease}
+.auth-overlay:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.38;background:radial-gradient(ellipse at 25% 54%,#b8f0d811,transparent 42%),linear-gradient(115deg,transparent 48%,#b8f0d805 50%,transparent 53%)}
+.auth-overlay[data-lit="true"]{--beam-strength:.92}
+.auth-layout{position:relative;z-index:1;width:min(1120px,100%);display:grid;grid-template-columns:minmax(0,1fr) minmax(350px,420px);align-items:center;gap:clamp(36px,7vw,100px);margin:auto}
+.auth-scene{position:relative;min-height:650px;display:flex;flex-direction:column;justify-content:space-between;padding:22px 0 36px;overflow:hidden}
+.auth-scene-copy{position:relative;z-index:1;max-width:520px}
+.auth-brand{display:inline-flex;align-items:center;gap:12px;color:#eef3ee;text-decoration:none;font-size:26px;letter-spacing:-1.5px;margin-bottom:68px}
+.auth-brand .brandmark{font-size:34px;color:#b8f0d8}
+.auth-brand small{display:block;color:#809184;font-size:8px;letter-spacing:2.2px;margin-top:2px}
+.auth-scene .eyebrow{color:#a7c9b1;letter-spacing:2.2px;font-size:9px;margin:0 0 18px}
+.auth-scene h2{font-size:clamp(32px,4vw,48px);line-height:1.16;letter-spacing:-1.8px;font-weight:450;margin:0}
+.auth-scene h2 em{color:#b8f0d8;font-style:normal}
+.auth-scene-description{max-width:390px;color:#a7b4aa;font-size:13px;line-height:1.9;margin-top:20px}
+.lamp-illustration{position:absolute;inset:105px -20px 48px 15%;display:grid;place-items:center;pointer-events:none;mask-image:linear-gradient(to bottom,#000 68%,transparent 100%)}
+.lamp-illustration:before{content:"";position:absolute;width:74%;height:35%;bottom:8%;border-radius:50%;background:radial-gradient(ellipse,#c6f3ba1e,transparent 70%);filter:blur(15px);opacity:var(--beam-strength);transition:opacity .5s ease}
+.lamp-illustration svg{position:relative;width:min(100%,490px);height:100%;overflow:visible;filter:drop-shadow(0 20px 30px #0008)}
+.lamp-beam{opacity:calc(var(--beam-strength) * .78);transition:opacity .55s ease}
+.lamp-halo{opacity:calc(var(--beam-strength) * .42);transition:opacity .6s ease}
+.lamp-bulb{filter:drop-shadow(0 0 15px #eaffccaa);animation:lamp-breathe 4s ease-in-out infinite alternate}
+.lamp-glow{opacity:calc(var(--beam-strength) * .4);animation:lamp-glow 4s ease-in-out infinite alternate}
+.auth-scene-caption{position:absolute;bottom:5%;left:50%;transform:translateX(-50%);color:#99ad9f;white-space:nowrap;font-size:10px;letter-spacing:.5px}
+.auth-promise{position:relative;z-index:1;display:flex;align-items:center;gap:11px;color:#b8c5b9;font-size:9px;letter-spacing:.3px}
+.auth-promise span{color:#81998a;font-variant-numeric:tabular-nums}
+.auth-promise i{height:1px;width:22px;background:#55665b}
+.auth-card{position:relative;width:100%;max-width:420px;background:linear-gradient(155deg,#18221fef,#121925f5 58%);border:1px solid #495b4d;border-radius:22px;padding:34px;box-shadow:0 30px 90px #0008,0 0 55px #b8f0d80a;backdrop-filter:blur(18px);animation:auth-card-in .7s cubic-bezier(.2,.7,.25,1) both}
+.auth-card:before{content:"";position:absolute;inset:0 18% auto;height:1px;background:linear-gradient(90deg,transparent,#c5efc377,transparent)}
+.auth-card .brandmark{color:#b8f0d8}.auth-card h1{font-size:27px;letter-spacing:-.9px}.auth-card .muted{color:#a5b3c1}.auth-benefits{gap:8px;padding:14px 0;border-color:#ffffff15}.auth-benefits span{color:#c0d7c6;font-size:11px}.auth-card label{color:#bec9c0}.auth-card input{border-color:#354437;background:#0d1414}.auth-card input:focus{border-color:#9bd5b2;box-shadow:0 0 0 3px #9bd5b21c}.auth-card .primary{min-height:44px;box-shadow:0 5px 22px #b8f0d81a}.auth-card .primary:hover{box-shadow:0 8px 28px #b8f0d83a}.auth-card .textbutton{font-size:11px}.auth-card .fine{color:#96a6a0}.auth-mobile-mark{display:none}
+@keyframes lamp-breathe{from{opacity:.8}to{opacity:1}}
+@keyframes lamp-glow{from{opacity:.12;transform:scale(.9)}to{opacity:.55;transform:scale(1.12)}}
+@keyframes auth-card-in{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:900px){.auth-overlay{align-items:start}.auth-layout{grid-template-columns:minmax(0,480px);justify-content:center;gap:14px}.auth-scene{min-height:185px;padding:4px 0 0;overflow:visible}.auth-scene-copy{text-align:center}.auth-brand{display:none}.auth-scene .eyebrow{font-size:8px;margin:4px 0 8px}.auth-scene h2{font-size:26px;letter-spacing:-.8px}.auth-scene-description{display:none}.lamp-illustration{inset:25px 25% -26px 25%;opacity:.38;mask-image:linear-gradient(to bottom,#000 0%,transparent 100%)}.auth-scene-caption,.auth-promise{display:none}.auth-card{margin:0 auto;padding:26px 28px}.auth-mobile-mark{display:block;margin:0 auto 7px;text-align:center;font-size:24px}.auth-card>.eyebrow{text-align:center;margin-top:0}.auth-card h1{text-align:center;font-size:24px;margin:8px 0}.auth-card>.muted{text-align:center;margin:0 auto;max-width:330px}.auth-benefits{grid-template-columns:1fr 1fr;gap:7px}.auth-benefits span:last-child{grid-column:1/-1}}
+@media(max-width:480px){.auth-overlay{padding:14px}.auth-layout{gap:4px}.auth-scene{min-height:145px}.auth-scene h2{font-size:23px}.lamp-illustration{inset:14px 28% -30px}.auth-card{padding:22px 21px;border-radius:18px}.auth-card label{margin:13px 0}.auth-benefits span{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.lamp-bulb,.lamp-glow,.auth-card{animation:none!important}}
