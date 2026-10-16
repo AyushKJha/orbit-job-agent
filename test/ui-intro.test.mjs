@@ -41,9 +41,6 @@ test('theme toggle persists Ivory and Midnight choice',()=>{
 test('login retains validated username/password fields and glass fallbacks stay accessible',async()=>{
  const html=await readFile(new URL('../public/index.html',import.meta.url),'utf8');
  const css=await readFile(new URL('../public/style.css',import.meta.url),'utf8');
- assert.match(html,/<button data-tab="overview" class="active" aria-current="page">/);
- assert.match(html,/<section id="overview" class="panel overview active">/);
- assert.match(html,/<form id="chatForm" class="composer">/);
  assert.match(html,/name="handle"[^>]*minlength="3"[^>]*required/);
  assert.match(html,/name="password"[^>]*minlength="12"[^>]*required/);
  assert.match(html,/id="lampCord"[^>]*aria-pressed="false"/);

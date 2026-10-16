@@ -5,7 +5,6 @@
 - Added the newly supplied 193852 recording as the separate intro and placed the 193740 lamp recording on the login page, with the pull-cord interaction and an illustrated fallback.
 - Fixed production static routes for the imported lamp/theme modules and both videos, including byte-range video playback. These missing routes previously prevented the login/app JavaScript from loading and left the visible workspace inert.
 - Increased dark-theme surface contrast and strengthened the raised/recessed neumorphic treatment while retaining Ivory as the optional light theme.
-- Made the populated overview the first screen so new visitors see the opportunity dashboard, onboarding steps, and search controls immediately, while the prompt bar remains available throughout the workspace.
 - Added HTTP regression coverage for all browser modules and intro-video range requests.
 
 ## 2026-10-16
