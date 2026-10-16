@@ -33,6 +33,9 @@ export async function ensureAuth(){
  else playIntro();
 
  const cord=document.querySelector('#lampCord');
+ const lampVideo=document.querySelector('.lamp-video');
+ const lampArt=document.querySelector('.lamp-illustration');
+ lampVideo.addEventListener('error',()=>lampArt.classList.add('video-fallback'));
  const card=document.querySelector('#authCard');
  const hint=document.querySelector('#lampHint');
  initializeLamp({overlay,cord,card,hint});
