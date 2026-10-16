@@ -1,4 +1,4 @@
-<img src="docs/banner.svg" alt="Project overview" width="100%">
+<img src="docs/banner.svg" alt="orbit-job-agent project illustration" width="100%">
 
 # Orbit
 ### A workspace for finding roles and preparing outreach.
