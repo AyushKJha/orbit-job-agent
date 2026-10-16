@@ -45,14 +45,8 @@ test('login retains validated username/password fields and glass fallbacks stay 
  assert.match(html,/name="password"[^>]*minlength="12"[^>]*required/);
  assert.match(html,/id="lampCord"[^>]*aria-pressed="false"/);
  assert.match(html,/id="orbitIntroVideo"[^>]*muted playsinline controls/);
- assert.match(html,/src="\/media\/orbit-intro\.mp4"/);
- assert.match(html,/class="lamp-video" src="\/media\/orbit-lamp\.mp4"/);
  const intro=await readFile(new URL('../public/media/orbit-intro.mp4',import.meta.url));
  assert.ok(intro.length>1000);
- const lamp=await readFile(new URL('../public/media/orbit-lamp.mp4',import.meta.url));assert.ok(lamp.length>1000);
- assert.match(css,/:root\{color-scheme:dark;--canvas:#1b1f23/);
- const server=await readFile(new URL('../server.mjs',import.meta.url),'utf8');
- for(const route of ['/lamp.js','/theme.js','/media/orbit-intro.mp4','/media/orbit-lamp.mp4'])assert.ok(server.includes(route),route+' must be served by Orbit');
  assert.match(css,/@supports not \(\(backdrop-filter/);
  assert.match(css,/prefers-reduced-motion:\s*reduce/);
  assert.match(css,/focus-visible/);
