@@ -312,3 +312,99 @@ body[data-theme="dark"] .intro-overlay {background:radial-gradient(ellipse at 81
   .intro-art {min-height:175px;}
   .intro-art-note {scale:.88;}
 }
+
+/* Final viewport-fitted product entry and sign-in layouts. */
+.intro-overlay {height:100svh;min-height:0;overflow:hidden;padding:20px clamp(22px,5vw,76px) 14px;transition:opacity .26s ease,transform .26s ease;}
+.intro-overlay.is-exiting {opacity:0;transform:translateY(-8px);pointer-events:none;}
+.intro-top {flex:0 0 34px;}
+.intro-main {flex:1 1 auto;min-height:0;margin:8px auto;align-items:center;}
+.intro-copy h1 {font:600 clamp(42px,5vw,68px)/.99 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.06em;}
+.intro-copy h1 em {font-style:normal;color:var(--coral);}
+.intro-description {max-width:480px;font-size:clamp(12px,1.1vw,15px);}
+.intro-features {gap:7px;margin:18px 0 14px;}
+.intro-features article {grid-template-columns:30px 1fr;gap:8px;padding:9px 12px;border-radius:12px;}
+.intro-features b {font-size:11px;}.intro-features small {font-size:9px;}
+.intro-continue {min-height:42px;padding:9px 16px;}
+.intro-privacy {font-size:9px;margin-top:10px;}
+.intro-art {min-height:0;height:min(58vh,520px);}
+.intro-orbit-one {width:min(23vw,290px);height:min(23vw,290px);}
+.intro-orbit-two {width:min(34vw,420px);height:min(34vw,420px);}
+.intro-sun {width:clamp(84px,9vw,118px);height:clamp(84px,9vw,118px);font-size:clamp(48px,6vw,68px);}
+.intro-footer {flex:0 0 24px;padding:8px 0 0;font-size:8px;}
+.intro-overlay:after {content:"";position:absolute;left:0;bottom:0;width:100%;height:3px;transform-origin:left;pointer-events:none;background:var(--coral);animation:intro-progress 2.8s linear both;}
+@keyframes intro-progress {from{transform:scaleX(0);opacity:.9}to{transform:scaleX(1);opacity:0}}
+.lamp-auth {position:fixed;inset:0;width:100%;height:100svh;min-width:0;overflow:hidden;}
+.lamp-room {display:grid;grid-template-columns:minmax(0,1.08fr) minmax(390px,.92fr);grid-template-rows:minmax(0,1fr);align-items:center;gap:clamp(18px,3.5vw,54px);width:100%;height:100svh;min-height:0;overflow:hidden;padding:clamp(56px,8vh,76px) clamp(24px,5vw,82px) 24px;}
+.lamp-stage {align-self:stretch;width:100%;height:100%;min-height:0;flex:none;}
+.lamp-rig {--lamp-scale:.64;left:50%;top:46%;}
+.intro-hint {left:4%;right:4%;bottom:1%;max-width:560px;text-align:center;}
+.intro-hint h2 {font-size:clamp(27px,2.7vw,40px);margin:6px 0;}
+.intro-hint p {margin:0;font-size:10px;}
+.lamp-bottom-note {display:none;}
+.login-side {width:100%;max-width:520px;max-height:100%;min-height:0;flex:none;margin:0;justify-self:center;}
+.login-panel {max-height:calc(100svh - 100px);overflow-y:auto;overscroll-behavior:contain;padding:clamp(22px,2.6vw,34px);}
+.login-panel h1 {font-size:clamp(30px,3.1vw,42px);}
+.login-panel .subtitle {margin:10px 0 18px;}
+.input-row {margin-bottom:13px;}
+.lamp-room.is-lit .intro-hint {opacity:0;}
+@media(max-width:1000px) {
+  .lamp-room {grid-template-columns:minmax(0,1fr);grid-template-rows:clamp(210px,30svh,280px) minmax(0,1fr);justify-items:center;align-content:stretch;gap:6px;padding:58px 22px max(14px,env(safe-area-inset-bottom));}
+  .lamp-brand {top:18px;left:22px;}.lamp-edition {top:25px;right:22px;}
+  .lamp-stage {height:100%;min-height:0;max-height:none;}
+  .lamp-rig {--lamp-scale:.38;top:43%;}
+  .intro-hint {display:none;}
+  .login-side {width:min(100%,480px);max-width:480px;max-height:100%;align-self:center;}
+  .login-panel {max-height:100%;padding:20px 23px;}
+  .lamp-beam {width:740px;height:430px;}
+}
+@media(max-width:680px) {
+  .intro-overlay {padding:14px 18px max(12px,env(safe-area-inset-bottom));}
+  .intro-top {flex-basis:30px;}
+  .intro-main {grid-template-columns:1fr;gap:0;width:min(540px,100%);margin:4px auto;}
+  .intro-art {grid-row:1;height:clamp(100px,19svh,155px);margin:0;}
+  .intro-orbit-one {width:110px;height:110px;}.intro-orbit-two {width:168px;height:168px;}
+  .intro-sun {width:58px;height:58px;border-radius:19px;font-size:36px;}
+  .intro-art-note {padding:6px 8px;gap:6px;}.intro-art-note i {width:21px;height:21px;}
+  .intro-art-note b {font-size:8px;}.intro-art-note small {font-size:7px;}
+  .intro-note-one {top:0;left:0;}.intro-note-two {top:35%;right:0;}.intro-note-three {bottom:0;left:0;}
+  .intro-copy {margin:4px auto 0;}.intro-copy>.eyebrow {font-size:8px;margin:5px 0;}
+  .intro-copy h1 {font-size:clamp(36px,9vw,52px);margin:7px 0;}
+  .intro-description {font-size:11px;line-height:1.55;}
+  .intro-features {grid-template-columns:1fr;gap:5px;margin:10px 0;}
+  .intro-features article {padding:7px 10px;}.intro-features small {font-size:8px;margin-top:2px;}
+  .intro-privacy {font-size:8px;margin:7px 0 0;}.intro-footer {font-size:6px;}
+  .lamp-room {grid-template-rows:clamp(142px,22svh,190px) minmax(0,1fr);gap:4px;padding:54px 16px max(10px,env(safe-area-inset-bottom));}
+  .lamp-brand {top:15px;left:16px;}.lamp-edition {top:21px;right:16px;font-size:6px;}
+  .lamp-rig {--lamp-scale:.29;top:43%;}
+  .login-panel {padding:17px 19px;border-radius:16px;}
+  .login-panel .panel-top {font-size:8px;margin-bottom:7px;}
+  .login-panel h1 {font-size:clamp(25px,7vw,32px);line-height:1;}
+  .login-panel .subtitle {font-size:10px;margin:7px 0 11px;}
+  .lamp-auth .login-panel label {font-size:8px;margin-bottom:5px;}
+  .input-row {min-height:38px;margin-bottom:9px;}
+  .lamp-auth .input-row input {font-size:16px;padding:8px;}
+  .lamp-submit {min-height:40px;padding:9px 13px;}
+  .lamp-auth-toggle {margin-top:7px;}.lamp-footnote {margin-top:8px;font-size:8px;}
+}
+@media(max-height:680px) {
+  .intro-overlay {padding-top:12px;padding-bottom:10px;}
+  .intro-main {margin:2px auto;}
+  .intro-copy h1 {font-size:clamp(36px,4.6vw,58px);}
+  .intro-features {gap:4px;margin:10px 0 8px;}
+  .intro-features article {padding:6px 9px;}
+  .intro-art {height:45svh;}
+  .lamp-room {padding-top:50px;padding-bottom:12px;}
+  .lamp-rig {--lamp-scale:.52;}
+  .login-panel {padding-top:17px;padding-bottom:15px;}
+  .login-panel .subtitle {margin:6px 0 9px;}
+}
+@media(max-height:520px) and (max-width:1000px) {
+  .lamp-room {grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);grid-template-rows:minmax(0,1fr);gap:8px;padding:48px 14px 10px;}
+  .lamp-rig {--lamp-scale:.24;}
+  .login-panel {padding:12px 16px;}
+  .login-panel h1 {font-size:24px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .intro-overlay:after {animation-duration:.01ms;}
+  .intro-overlay.is-exiting {transition-duration:.01ms;}
+}

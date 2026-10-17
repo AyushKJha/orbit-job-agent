@@ -7,10 +7,10 @@ export async function ensureAuth(){
  if(status.user&&!preview){overlay.hidden=true;intro.hidden=true;return;}
  document.body.classList.add('signed-out');
  overlay.hidden=true;intro.hidden=false;
- document.querySelector('#introContinue').addEventListener('click',()=>{
-  intro.hidden=true;overlay.hidden=false;
-  requestAnimationFrame(()=>document.querySelector('#cordHandle').focus({preventScroll:true}));
- });
+ const continueButton=document.querySelector('#introContinue');let introTimer;
+ const enterSignIn=()=>{clearTimeout(introTimer);intro.classList.add('is-exiting');setTimeout(()=>{intro.hidden=true;intro.classList.remove('is-exiting');overlay.hidden=false;window.orbitSetLamp?.(true);},260);};
+ continueButton.addEventListener('click',enterSignIn);
+ introTimer=setTimeout(enterSignIn,matchMedia('(prefers-reduced-motion: reduce)').matches?900:2800);
  let signup=false;
  const form=document.querySelector('#authForm'),title=document.querySelector('#authTitle'),submit=document.querySelector('#authSubmit'),toggle=document.querySelector('#authToggle'),error=document.querySelector('#authError');
  if(preview){
