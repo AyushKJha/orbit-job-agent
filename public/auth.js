@@ -1,9 +1,10 @@
 export async function ensureAuth(){
  const status=await (await fetch('/api/auth/me')).json();
  const overlay=document.querySelector('#authOverlay'),intro=document.querySelector('#introOverlay');
- if(!status.hosted){overlay.hidden=true;intro.hidden=true;return;}
+ const preview=new URLSearchParams(location.search).get('preview')==='experience';
+ if(!status.hosted&&!preview){overlay.hidden=true;intro.hidden=true;return;}
  document.querySelector('#logoutButton').hidden=false;
- if(status.user){overlay.hidden=true;intro.hidden=true;return;}
+ if(status.user&&!preview){overlay.hidden=true;intro.hidden=true;return;}
  document.body.classList.add('signed-out');
  overlay.hidden=true;intro.hidden=false;
  document.querySelector('#introContinue').addEventListener('click',()=>{
@@ -12,6 +13,10 @@ export async function ensureAuth(){
  });
  let signup=false;
  const form=document.querySelector('#authForm'),title=document.querySelector('#authTitle'),submit=document.querySelector('#authSubmit'),toggle=document.querySelector('#authToggle'),error=document.querySelector('#authError');
+ if(preview){
+  form.querySelectorAll('input').forEach(input=>{input.readOnly=true;input.placeholder=input.name==='handle'?'Username preview':'Password preview';});
+  submit.disabled=true;submit.textContent='Preview only';toggle.hidden=true;error.textContent='This is a visual preview. Sign out to use your real login.';
+ }
  toggle.addEventListener('click',()=>{
   signup=!signup;
   title.innerHTML=signup?'Start your next chapter.<em>Make it yours.</em>':'Welcome back.<em>Your next chapter awaits.</em>';
