@@ -7,10 +7,9 @@ export async function ensureAuth(){
  if(status.user&&!preview){overlay.hidden=true;intro.hidden=true;return;}
  document.body.classList.add('signed-out');
  overlay.hidden=true;intro.hidden=false;
- const continueButton=document.querySelector('#introContinue');let introTimer;
- const enterSignIn=()=>{clearTimeout(introTimer);intro.classList.add('is-exiting');setTimeout(()=>{intro.hidden=true;intro.classList.remove('is-exiting');overlay.hidden=false;window.orbitSetLamp?.(false);},260);};
- continueButton.addEventListener('click',enterSignIn);
- introTimer=setTimeout(enterSignIn,matchMedia('(prefers-reduced-motion: reduce)').matches?900:2800);
+ let introTimer;
+ const enterSignIn=()=>{clearTimeout(introTimer);intro.classList.add('is-exiting');setTimeout(()=>{intro.hidden=true;intro.classList.remove('is-exiting');overlay.hidden=false;window.orbitSetLamp?.(false);},500);};
+ introTimer=setTimeout(enterSignIn,matchMedia('(prefers-reduced-motion: reduce)').matches?1200:3400);
  let signup=false;
  const form=document.querySelector('#authForm'),title=document.querySelector('#authTitle'),submit=document.querySelector('#authSubmit'),toggle=document.querySelector('#authToggle'),error=document.querySelector('#authError');
  if(preview){
