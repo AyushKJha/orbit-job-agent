@@ -54,6 +54,7 @@ body[data-theme="dark"] { background: radial-gradient(ellipse at 64% 16%, rgba(1
 .sidebar { box-shadow: 7px 0 28px rgba(76,70,56,.055); }
 body[data-theme="dark"] .sidebar { background: rgba(26,29,32,.88); box-shadow: 7px 0 28px rgba(0,0,0,.16); }
 .brand { color: var(--ink); }
+.brandperiod { color: var(--coral); }
 .brandmark { color: var(--ink); filter: drop-shadow(0 2px 2px rgba(75,80,70,.08)); }
 .brandmark { width:38px;height:38px;flex:none;object-fit:contain;border-radius:12px; }
 .brandcaption, .navlabel, .sidebarbottom p, .userchip div>span { color: var(--muted); }
@@ -414,3 +415,69 @@ body[data-theme="dark"] .intro-overlay {background:radial-gradient(ellipse at 81
 .brand .brandmark {width:38px;height:38px;flex:none;object-fit:contain;border-radius:12px;}
 .intro-brand>img {width:30px;height:30px;flex:none;object-fit:contain;border-radius:9px;}
 .lamp-brand>img {width:27px;height:27px;flex:none;object-fit:contain;border-radius:8px;}
+
+/* A quieter, quicker welcome that introduces Orbit without a wall of cards. */
+.intro-overlay {height:100svh;min-height:0;overflow:auto;padding:clamp(18px,3vw,38px) clamp(22px,6vw,88px) 18px;background:var(--canvas);}
+.intro-overlay:before {content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:radial-gradient(ellipse at 78% 48%,rgba(184,217,199,.27),transparent 34rem),radial-gradient(ellipse at 32% 87%,rgba(244,106,73,.09),transparent 30rem);}
+body[data-theme="dark"] .intro-overlay:before {background:radial-gradient(ellipse at 78% 48%,rgba(76,128,101,.2),transparent 34rem),radial-gradient(ellipse at 32% 87%,rgba(173,111,89,.1),transparent 30rem);}
+.intro-grain {display:none;}
+.intro-top {flex:0 0 46px;width:min(1180px,100%);margin:0 auto;border-bottom:1px solid var(--line-soft);}
+.intro-brand {gap:10px;font:700 14px "Segoe UI",Inter,system-ui,sans-serif;letter-spacing:0;color:var(--ink);}
+.intro-brand>img {width:38px;height:38px;border-radius:12px;}
+.intro-brand>span {display:inline;width:auto;height:auto;border:0;border-radius:0;color:var(--ink);font:750 23px/1 "Segoe UI",Inter,system-ui,sans-serif;letter-spacing:-.07em;}
+.intro-brand>span i {color:var(--coral);font-style:normal;}
+.intro-top>span {font-size:8px;letter-spacing:.14em;}
+.intro-main {flex:1 0 auto;min-height:0;width:min(1080px,100%);margin:auto;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);align-items:center;gap:clamp(35px,8vw,110px);}
+.intro-copy {max-width:610px;}
+.intro-copy>.eyebrow {margin:0 0 17px;color:var(--sage-deep);font-size:9px;letter-spacing:.17em;}
+.intro-copy h1 {max-width:600px;margin:0 0 17px;font:400 clamp(48px,6.4vw,78px)/.98 Georgia,"Times New Roman",serif;letter-spacing:-.055em;color:var(--ink);}
+.intro-copy h1 em {color:var(--coral);font-weight:400;}
+.intro-description {max-width:500px;margin:0;color:var(--ink-soft);font-size:14px;line-height:1.75;}
+.intro-steps {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:28px 0 25px;padding:17px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);}
+.intro-steps>div {display:grid;gap:7px;}
+.intro-steps>div>span {color:var(--coral);font:9px ui-monospace,SFMono-Regular,Consolas,monospace;}
+.intro-steps b {font-size:10px;font-weight:600;}
+.intro-continue {min-height:46px;padding:11px 17px;border-radius:13px;font-size:11px;}
+.intro-continue svg {width:16px;height:16px;}
+.intro-privacy {margin:12px 0 0;color:var(--muted);font-size:9px;}
+.intro-privacy a {color:var(--sage-deep);}
+.intro-visual {min-height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:35px 25px;border:1px solid var(--line);border-radius:26px;background:var(--surface);box-shadow:var(--shadow-raised);backdrop-filter:blur(14px);animation:intro-rise .7s .08s both;}
+.intro-visual-mark {width:96px;height:96px;margin-bottom:23px;border-radius:25px;box-shadow:0 12px 28px rgba(35,56,45,.17);}
+.intro-visual-mark img {display:block;width:100%;height:100%;border-radius:inherit;}
+.intro-visual-kicker {margin:0;color:var(--muted);font:8px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.15em;}
+.intro-route {display:flex;align-items:center;width:min(270px,90%);margin-top:27px;}
+.intro-route>span {flex:0 0 10px;height:10px;border:2px solid var(--sage-deep);border-radius:50%;background:var(--surface-solid);}
+.intro-route>span:first-child,.intro-route>span:last-child {border-color:var(--coral);background:var(--coral);box-shadow:0 0 0 4px color-mix(in srgb,var(--coral) 14%,transparent);}
+.intro-route>i {flex:1;height:1px;background:linear-gradient(90deg,var(--coral),var(--sage-deep));}
+.intro-route-labels {display:flex;justify-content:space-between;width:min(300px,100%);margin-top:10px;color:var(--muted);font-size:8px;}
+.intro-footer {flex:0 0 28px;width:min(1180px,100%);align-self:center;padding-top:10px;border-top:1px solid var(--line-soft);font-size:8px;}
+@media(max-width:760px) {
+  .intro-overlay {padding:14px 20px max(15px,env(safe-area-inset-bottom));}
+  .intro-top {flex-basis:40px;}
+  .intro-brand>img {width:32px;height:32px;}
+  .intro-brand>span {font-size:20px;}
+  .intro-top>span {font-size:7px;letter-spacing:.08em;}
+  .intro-main {grid-template-columns:1fr;gap:15px;width:min(540px,100%);margin:15px auto;}
+  .intro-visual {grid-row:1;min-height:0;padding:14px 16px;border-radius:20px;}
+  .intro-visual-mark {width:52px;height:52px;margin-bottom:10px;border-radius:16px;}
+  .intro-visual-kicker {font-size:7px;}
+  .intro-route {width:min(230px,85%);margin-top:12px;}
+  .intro-route-labels {width:min(260px,95%);margin-top:6px;}
+  .intro-copy {margin:0 auto;}
+  .intro-copy>.eyebrow {margin:0 0 10px;font-size:8px;}
+  .intro-copy h1 {font-size:clamp(39px,10vw,58px);margin-bottom:10px;}
+  .intro-description {font-size:12px;line-height:1.6;}
+  .intro-steps {gap:8px;margin:17px 0;padding:12px 0;}
+  .intro-steps>div {gap:5px;}
+  .intro-steps b {font-size:9px;}
+  .intro-continue {min-height:42px;}
+  .intro-footer {flex-basis:24px;font-size:7px;}
+}
+@media(max-height:640px) and (min-width:761px) {
+  .intro-overlay {padding-top:12px;padding-bottom:10px;}
+  .intro-top {flex-basis:36px;}
+  .intro-visual {min-height:250px;padding:22px;}
+  .intro-visual-mark {width:72px;height:72px;margin-bottom:15px;}
+  .intro-steps {margin:18px 0;padding:12px 0;}
+  .intro-footer {flex-basis:22px;}
+}
