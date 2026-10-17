@@ -1,6 +1,6 @@
 # Orbit
 
-[Open Orbit](https://orbit-job-agent.onrender.com) · Free hosted preview (invitation required)
+[Open Orbit](https://orbit-job-agent.onrender.com) · Free hosted preview (email verification required for new accounts)
 
 A standalone conversational job-search and Gmail outreach agent. Friends do not need Codex or ChatGPT Plus. AI can run through Ollama on the owner’s computer with no paid model API calls; optional OpenAI mode uses funded API access. Gmail needs OAuth authorization. See [local AI setup](LOCAL_AI.md).
 
@@ -14,7 +14,7 @@ A standalone conversational job-search and Gmail outreach agent. Friends do not 
 - Gmail drafts and chosen attachments; sending requires approval of exact draft contents. Remote edits invalidate approval.
 - Daily send caps, suppression, duplicate prevention and reconciliation of uncertain sends.
 - Reviewable reply categories and improvement suggestions grounded in materials, listing requirements and employer feedback.
-- Hosted sign-in, isolated workspaces, encrypted API/OAuth credentials, CSRF protection, invite-code registration and workspace export.
+- Email one-time-code sign-in for new and email-keyed accounts, isolated workspaces, encrypted API/OAuth credentials, CSRF protection and workspace export.
 
 ## Run locally
 
@@ -43,7 +43,7 @@ Human reply totals count each outreach record once. Multiple replies do not infl
 
 See [DEPLOYMENT.md](DEPLOYMENT.md). Dockerfile and render.yaml target Render Free, encrypted private Supabase Storage, and scheduled GitHub Actions. Render supplies a project-named onrender.com address without ChatGPT in the URL. Hosting uses free tiers with cold starts, quotas and best-effort scheduling; no paid resources are provisioned.
 
-Hosted mode requires HTTPS APP_URL, durable cloud storage or persistent JOB_AGENT_DATA and a stable 64-character hexadecimal VAULT_KEY. It binds to 0.0.0.0 and requires sign-in. Set SIGNUP_CODE for a controlled launch. Users supply their own API keys; hosted accounts never inherit the server key. Hosted Gmail uses a Web application OAuth client with the exact APP_URL/oauth/callback redirect. Broad distribution may require Google OAuth verification.
+Hosted mode requires HTTPS APP_URL, durable cloud storage or persistent JOB_AGENT_DATA and a stable 64-character hexadecimal VAULT_KEY. It binds to 0.0.0.0 and requires sign-in. New users receive an email OTP; configure `OTP_EMAIL_API_KEY` and `OTP_EMAIL_FROM` in Render with a Resend API key and a verified sender domain. No invitation code is needed. Existing username/password accounts retain a legacy sign-in option. Users supply their own AI API keys; hosted accounts never inherit the server key. Hosted Gmail uses a Web application OAuth client with the exact APP_URL/oauth/callback redirect. Broad distribution may require Google OAuth verification. See `DEPLOYMENT.md` for the OTP security and sender setup details.
 
 ## Data and privacy
 

@@ -644,3 +644,26 @@ body[data-theme="dark"] .intro-overlay:before {background:radial-gradient(ellips
   .intro-rebuilt:before,.intro-rebuilt-copy,.intro-rebuilt-steps article,.intro-rebuilt-art,.intro-rebuilt-aura,.intro-rebuilt-orbit,.intro-rebuilt-core,.intro-rebuilt-note,.intro-rebuilt-star,.intro-rebuilt-opening>div>b {animation:none!important;transition-duration:.01ms!important;}
   .intro-rebuilt-opening>div>b {transform:scaleX(1);}
 }
+
+/* Email one-time-code sign-in */
+.otp-code-step {animation:otp-step-in .38s cubic-bezier(.2,.75,.25,1) both;}
+.otp-code-step[hidden] {display:none!important;}
+.lamp-auth .otp-input {min-height:58px;}
+.lamp-auth .otp-input input {font-variant-numeric:tabular-nums;letter-spacing:.38em;font-size:21px;font-weight:700;}
+.otp-ring {width:19px;height:19px;margin-right:14px;border:1px solid #d6ad7b;border-radius:50%;position:relative;opacity:.8;}
+.otp-ring:before,.otp-ring:after {content:"";position:absolute;inset:4px;border:1px solid #b9d5c0;border-radius:50%;}
+.otp-ring:after {inset:-4px;border-color:#d6ad7b55;animation:otp-ring-pulse 2.4s ease-out infinite;}
+.otp-delivery-note {margin:-9px 0 12px;color:#a89b91;font-size:9px;}
+.otp-status {min-height:15px;margin:4px 0 8px;color:#b8aaa1;font-size:10px;line-height:1.55;overflow-wrap:anywhere;}
+.otp-status:empty {display:none;}
+.otp-status.is-success {color:#b7d6c3;}
+.otp-status.is-error {color:#e5a09a;}
+.otp-spinner {display:inline-block;width:15px;height:15px;border:2px solid #35281f55;border-top-color:#342216;border-radius:50%;animation:otp-spin .72s linear infinite;vertical-align:-3px;margin-right:9px;}
+.lamp-submit.is-loading {cursor:wait;filter:saturate(.78);}
+.lamp-submit:disabled {opacity:.76;cursor:not-allowed;}
+#otpResend:disabled {opacity:.56;cursor:default;}
+#otpForm[hidden],#authForm[hidden] {display:none!important;}
+@keyframes otp-spin {to{transform:rotate(360deg)}}
+@keyframes otp-ring-pulse {0%{transform:scale(.72);opacity:.7}100%{transform:scale(1.85);opacity:0}}
+@keyframes otp-step-in {from{opacity:0;transform:translateY(9px);filter:blur(4px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@media(prefers-reduced-motion:reduce) {.otp-code-step,.otp-ring:after,.otp-spinner {animation:none!important}}

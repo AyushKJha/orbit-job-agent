@@ -5,34 +5,24 @@ export async function ensureAuth(){
  if(!status.hosted&&!preview){overlay.hidden=true;intro.hidden=true;return;}
  document.querySelector('#logoutButton').hidden=false;
  if(status.user&&!preview){overlay.hidden=true;intro.hidden=true;return;}
- document.body.classList.add('signed-out');
- overlay.hidden=true;intro.hidden=false;
+ document.body.classList.add('signed-out');overlay.hidden=true;intro.hidden=false;
  let introTimer;
  const enterSignIn=()=>{clearTimeout(introTimer);intro.classList.add('is-exiting');setTimeout(()=>{intro.hidden=true;intro.classList.remove('is-exiting');overlay.hidden=false;window.orbitSetLamp?.(false);},500);};
  introTimer=setTimeout(enterSignIn,matchMedia('(prefers-reduced-motion: reduce)').matches?1200:4200);
- let signup=false;
- const form=document.querySelector('#authForm'),title=document.querySelector('#authTitle'),submit=document.querySelector('#authSubmit'),toggle=document.querySelector('#authToggle'),error=document.querySelector('#authError');
- if(preview){
-  form.querySelectorAll('input').forEach(input=>{input.readOnly=true;input.placeholder=input.name==='handle'?'Username preview':'Password preview';});
-  submit.disabled=true;submit.textContent='Preview only';toggle.hidden=true;error.textContent='This is a visual preview. Sign out to use your real login.';
- }
- toggle.addEventListener('click',()=>{
-  signup=!signup;
-  title.innerHTML=signup?'Start your next chapter.<em>Make it yours.</em>':'Welcome back.<em>Your next chapter awaits.</em>';
-  submit.innerHTML=signup?'Create my workspace <span aria-hidden="true">↗</span>':'Sign in <span aria-hidden="true">↗</span>';
-  toggle.textContent=signup?'Already have an account? Sign in':'New to Orbit? Create an account';
-  document.querySelector('#inviteField').hidden=!signup;
-  form.elements.password.autocomplete=signup?'new-password':'current-password';
- });
+ const otpForm=document.querySelector('#otpForm'),emailInput=document.querySelector('#otpEmail'),codeInput=document.querySelector('#otpCode'),codeStep=document.querySelector('#otpCodeStep'),otpStatus=document.querySelector('#otpStatus'),otpSubmit=document.querySelector('#otpSubmit'),resend=document.querySelector('#otpResend'),legacyForm=document.querySelector('#authForm'),legacyToggle=document.querySelector('#legacyToggle'),otpToggle=document.querySelector('#otpToggle');
+ const setOtpMode=legacy=>{otpForm.hidden=legacy;resend.hidden=legacy||preview||!codeStep.hidden;legacyForm.hidden=!legacy;legacyToggle.hidden=legacy||preview;otpToggle.hidden=!legacy;};
+ const setBusy=(busy,label)=>{otpSubmit.disabled=busy;otpSubmit.classList.toggle('is-loading',busy);otpSubmit.innerHTML=busy?'<span class="otp-spinner" aria-hidden="true"></span>'+label:'<span>'+(codeStep.hidden?'Email me a sign-in code':'Verify my code')+'</span><span aria-hidden="true">↗</span>';};
+ let resendTimer;
+ const cooldown=seconds=>{clearInterval(resendTimer);let left=seconds;resend.disabled=true;resend.textContent='Send a fresh code in '+left+'s';resendTimer=setInterval(()=>{left--;if(left<=0){clearInterval(resendTimer);resend.disabled=false;resend.textContent='Send a fresh code';}else resend.textContent='Send a fresh code in '+left+'s';},1000);};
+ const requestCode=async()=>{const email=emailInput.value.trim();if(!email){emailInput.focus();emailInput.reportValidity();return;}otpStatus.className='otp-status';otpStatus.textContent='';setBusy(true,'Sending your code');try{const response=await fetch('/api/auth/otp/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}),value=await response.json();if(!response.ok)throw Error(value.error||'Could not send a code.');codeStep.hidden=false;codeInput.required=true;codeInput.value='';otpStatus.className='otp-status is-success';otpStatus.textContent='Code sent to '+email+'. Check your inbox.';resend.hidden=false;cooldown(60);setBusy(false);codeInput.focus();}catch(error){otpStatus.className='otp-status is-error';otpStatus.textContent=error.message;setBusy(false);}};
+ if(!status.otpEnabled&&!preview){otpStatus.className='otp-status is-error';otpStatus.textContent='Email sign-in is being set up. Existing accounts can still use username and password.';setOtpMode(true);}
+ if(preview){emailInput.value='you@example.com';emailInput.readOnly=true;codeStep.hidden=false;codeInput.required=false;codeInput.value='123456';codeInput.readOnly=true;otpStatus.className='otp-status is-success';otpStatus.textContent='Visual preview · real email is not sent.';otpSubmit.disabled=true;otpSubmit.textContent='Preview only';legacyToggle.hidden=true;resend.hidden=true;}
+ otpForm.addEventListener('submit',async event=>{event.preventDefault();if(preview)return;if(codeStep.hidden){await requestCode();return;}const email=emailInput.value.trim(),code=codeInput.value.trim();if(!/^[0-9]{6}$/.test(code)){codeInput.focus();codeInput.reportValidity();return;}otpStatus.className='otp-status';otpStatus.textContent='';setBusy(true,'Checking your code');try{const response=await fetch('/api/auth/otp/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,code})}),value=await response.json();if(!response.ok)throw Error(value.error||'Could not verify that code.');clearInterval(resendTimer);overlay.hidden=true;document.body.classList.remove('signed-out');document.dispatchEvent(new CustomEvent('orbit-authenticated',{detail:value.user}));}catch(error){otpStatus.className='otp-status is-error';otpStatus.textContent=error.message;setBusy(false);codeInput.select();}});
+ resend.addEventListener('click',requestCode);codeInput.addEventListener('input',()=>{codeInput.value=codeInput.value.replace(/\D/g,'').slice(0,6);});
+ legacyToggle.addEventListener('click',()=>setOtpMode(true));otpToggle.addEventListener('click',()=>{otpStatus.textContent='';setOtpMode(false);});
+ document.querySelector('#passwordToggle').addEventListener('click',()=>{const input=document.querySelector('#loginPassword'),button=document.querySelector('#passwordToggle'),show=input.type==='password';input.type=show?'text':'password';button.textContent=show?'Hide':'Show';button.setAttribute('aria-label',show?'Hide password':'Show password');});
  await new Promise(resolve=>{
-  form.addEventListener('submit',async e=>{
-   e.preventDefault();submit.disabled=true;error.textContent='';
-   try{
-    const r=await fetch('/api/auth/'+(signup?'register':'login'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(form)))}),value=await r.json();
-    if(!r.ok)throw Error(value.error);
-    form.reset();overlay.hidden=true;document.body.classList.remove('signed-out');resolve();
-   }catch(e){error.textContent=e.message;}
-   finally{submit.disabled=false;}
-  });
+  legacyForm.addEventListener('submit',async event=>{event.preventDefault();const submit=document.querySelector('#authSubmit'),error=document.querySelector('#authError');submit.disabled=true;error.textContent='';try{const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(legacyForm)))}),value=await response.json();if(!response.ok)throw Error(value.error||'Sign in failed.');legacyForm.reset();overlay.hidden=true;document.body.classList.remove('signed-out');document.dispatchEvent(new CustomEvent('orbit-authenticated',{detail:value.user}));}catch(e){error.textContent=e.message;}finally{submit.disabled=false;}});
+  document.addEventListener('orbit-authenticated',resolve,{once:true});
  });
 }

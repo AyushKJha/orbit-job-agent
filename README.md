@@ -128,9 +128,9 @@ Gmail API access may require Google verification or test-user setup. See [OPERAT
 
 ## Hosted preview and deployment
 
-**Live preview:** [orbit-job-agent.onrender.com](https://orbit-job-agent.onrender.com/). Access is invitation-based; a hosted service may sleep when idle. The preview URL is project-named and does not require Codex or ChatGPT Plus.
+**Live preview:** [orbit-job-agent.onrender.com](https://orbit-job-agent.onrender.com/). Hosted registration uses email one-time codes once the operator configures the transactional email provider; a hosted service may sleep when idle. No invitation code, Codex account, or ChatGPT Plus subscription is needed to create an Orbit account.
 
-For self-hosting, see [DEPLOYMENT.md](DEPLOYMENT.md). The included Render configuration targets a free web service with private Supabase Storage and GitHub Actions wake-ups. Configure the app's server-only secrets in the hosting dashboard. Do not put a vault key, storage token, Google client secret, Gmail token, or API key in this repository.
+For self-hosting, see [DEPLOYMENT.md](DEPLOYMENT.md). The included Render configuration targets a free web service with private Supabase Storage and GitHub Actions wake-ups. Configure the app's server-only secrets in the hosting dashboard, including the Resend API key and verified sender required for email sign-in. Do not put a vault key, storage token, email-provider key, Google client secret, Gmail token, or AI API key in this repository.
 
 <details>
 <summary>Free hosting has real limits</summary>
