@@ -2,7 +2,7 @@
 
 <h1 align="center">Orbit</h1>
 <p align="center"><strong>Your career search, with more intention.</strong><br>Discover opportunities, prepare thoughtful outreach, and keep every decision yours.</p>
-<p align="center"><a href="https://orbit-job-agent.onrender.com/"><strong>Open the live Orbit preview ↗</strong></a> · Invitation required · <a href="docs/USER_GUIDE.pdf">Read the user guide</a> · <a href="LICENSE">MIT license</a></p>
+<p align="center"><a href="https://orbit-job-agent.onrender.com/"><strong>Open the live Orbit preview ↗</strong></a> · Invitation required · <a href="LICENSE">MIT license</a></p>
 
 Orbit is a private job-search workspace with a conversational command bar. Bring your CV, resume, and portfolio into one place; review relevant roles; prepare Gmail drafts; and learn from employer replies. Orbit keeps outreach under your control: **it never sends a message until you approve that exact draft.**
 
