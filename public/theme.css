@@ -55,6 +55,7 @@ body[data-theme="dark"] { background: radial-gradient(ellipse at 64% 16%, rgba(1
 body[data-theme="dark"] .sidebar { background: rgba(26,29,32,.88); box-shadow: 7px 0 28px rgba(0,0,0,.16); }
 .brand { color: var(--ink); }
 .brandmark { color: var(--ink); filter: drop-shadow(0 2px 2px rgba(75,80,70,.08)); }
+.brandmark { width:38px;height:38px;flex:none;object-fit:contain;border-radius:12px; }
 .brandcaption, .navlabel, .sidebarbottom p, .userchip div>span { color: var(--muted); }
 .navlabel { margin-top: 42px; }
 nav button { color: var(--ink-soft); border: 1px solid transparent; border-radius: 13px; transition: transform .24s cubic-bezier(.2,.8,.2,1), color .24s ease, background .24s ease, box-shadow .24s ease, border-color .24s ease; }
@@ -408,3 +409,8 @@ body[data-theme="dark"] .intro-overlay {background:radial-gradient(ellipse at 81
   .intro-overlay:after {animation-duration:.01ms;}
   .intro-overlay.is-exiting {transition-duration:.01ms;}
 }
+
+/* The Orbit identity mark is shared across the workspace, intro and lamp room. */
+.brand .brandmark {width:38px;height:38px;flex:none;object-fit:contain;border-radius:12px;}
+.intro-brand>img {width:30px;height:30px;flex:none;object-fit:contain;border-radius:9px;}
+.lamp-brand>img {width:27px;height:27px;flex:none;object-fit:contain;border-radius:8px;}
