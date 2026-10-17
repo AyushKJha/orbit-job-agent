@@ -12,7 +12,7 @@ test('hosted prompts use the authenticated local worker with no paid API key',as
  const auth='Bearer '+createHmac('sha256','worker-test').update('orbit-local-inference-worker-v1').digest('hex');
  const worker=async(route,input={},token=auth)=>fetch(origin+'/internal/worker/'+route,{method:'POST',headers:{Authorization:token,'Content-Type':'application/json'},body:JSON.stringify(input)});
  assert.equal((await worker('poll',{},'Bearer wrong')).status,401);
- const register=await fetch(origin+'/api/auth/register',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({handle:'worker-test',password:'Synthetic long password 123'})});assert.equal(register.status,200);
+ const register=await fetch(origin+'/api/auth/register',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({email:'worker-test@example.test',accessKey:'orb-'+'b'.repeat(64)})});assert.equal(register.status,200);
  const cookie=register.headers.get('set-cookie').split(';')[0],session=await fetch(origin+'/api/auth/me',{headers:{Cookie:cookie}}).then(r=>r.json());
  const state=()=>fetch(origin+'/api/state',{headers:{Cookie:cookie}}).then(r=>r.json());assert.equal((await state()).connection.apiConfigured,false);
  assert.equal((await worker('heartbeat',{model:'qwen3:4b'})).status,200);assert.equal((await state()).connection.apiConfigured,true);

@@ -16,10 +16,6 @@ services:
         value: 10000
       - key: VAULT_KEY
         sync: false
-      - key: OTP_EMAIL_API_KEY
-        sync: false
-      - key: OTP_EMAIL_FROM
-        sync: false
       - key: STORAGE_GATEWAY_URL
         sync: false
       - key: STORAGE_GATEWAY_TOKEN
