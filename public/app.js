@@ -6,6 +6,10 @@ const empty=message=>'<div class="empty">'+esc(message)+'</div>';
 const badge=value=>'<span class="badge '+esc(value)+'">'+esc(value.replaceAll('_',' '))+'</span>';
 const formData=form=>Object.fromEntries(new FormData(form));
 const bytesToBase64=buffer=>{let text='';const bytes=new Uint8Array(buffer);for(let i=0;i<bytes.length;i+=8192)text+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(text);};
+const themeKey='orbit-theme';
+function setTheme(theme){const dark=theme==='dark';document.body.dataset.theme=dark?'dark':'light';document.querySelectorAll('[data-theme-toggle]').forEach(button=>{button.setAttribute('aria-pressed',String(dark));button.setAttribute('aria-label','Switch to '+(dark?'light':'dark')+' theme');button.innerHTML='<span aria-hidden="true">'+(dark?'☀':'☾')+'</span><span class="theme-toggle-label">'+(dark?'Light mode':'Dark mode')+'</span>';});document.querySelector('meta[name="theme-color"]').content=dark?'#171a1d':'#f3f0e8';}
+setTheme(localStorage.getItem(themeKey)==='dark'?'dark':'light');
+document.querySelectorAll('[data-theme-toggle]').forEach(button=>button.addEventListener('click',()=>{const next=document.body.dataset.theme==='dark'?'light':'dark';setTheme(next);localStorage.setItem(themeKey,next);}));
 function notice(text,error=false){$('#notice').textContent=text;$('#notice').className=error?'error':'';}
 async function post(path,input={}){const r=await fetch('/api/'+path,{method:'POST',headers:{'Content-Type':'application/json','X-App-Token':state.csrfToken},body:JSON.stringify(input)});const value=await r.json();if(!r.ok)throw Error(value.error||'Request failed.');return value.result;}
 async function refresh(initial=false){const r=await fetch('/api/state');state=await r.json();if(!r.ok)throw Error(state.error);render();if(initial){fill($('#profileForm'),state.profile);fill($('#settingsForm'),state.settings);}}
