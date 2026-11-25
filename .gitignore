@@ -5,3 +5,10 @@ credentials.json
 node_modules/
 
 *.private.json
+# Local editor and assistant tooling
+.claude/
+.codex/
+.cursor/
+.aider*
+CLAUDE.md
+AGENTS.md

@@ -53,7 +53,7 @@ The prompt bar can take plain-language requests or direct commands. Orbit turns 
 | **Daily routine** | Set discovery time, time zone, result volume, and whether scheduled searches are enabled. The app must be awake for local schedules; free hosting schedules are best effort. |
 | **Thoughtful outreach** | Confirm the published contact and source, create a Gmail draft, attach chosen materials, and review its final wording. Editing a draft clears its approval. |
 | **Reply tracking** | Review tracked responses, distinguish human replies from automatic messages and bounces, and correct a classification when needed. Silence stays “awaiting”—it is not treated as a rejection. |
-| **Career growth** | Review suggestions grounded in your materials, role requirements, and available employer feedback. Treat AI-generated advice as a starting point to verify. |
+| **Career growth** | Review suggestions grounded in your materials, role requirements, and available employer feedback. Treat these suggestions as a starting point to verify. |
 | **Conversation and history** | Ask Orbit to carry out supported tasks, revisit saved conversations, and inspect receipts for completed or failed actions. |
 
 <details>
