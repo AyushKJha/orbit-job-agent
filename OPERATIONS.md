@@ -2,7 +2,7 @@
 
 [Open Orbit](https://orbit-job-agent.onrender.com) · Free hosted preview (save your Orbit key when creating an account)
 
-A standalone conversational job-search and Gmail outreach agent. Friends do not need Codex or ChatGPT Plus. AI can run through Ollama on the owner’s computer with no paid model API calls; optional OpenAI mode uses funded API access. Gmail needs OAuth authorization. See [local AI setup](LOCAL_AI.md).
+A standalone conversational job-search and Gmail outreach agent. Friends do not need a ChatGPT Plus subscription. AI can run through Ollama on the owner’s computer with no paid model API calls; optional OpenAI mode uses funded API access. Gmail needs OAuth authorization. See [local AI setup](LOCAL_AI.md).
 
 ## Features
 
