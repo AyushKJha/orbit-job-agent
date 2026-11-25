@@ -1,7 +1,7 @@
 FROM node:24-bookworm-slim
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN npm install --omit=dev
+RUN corepack enable && pnpm install --frozen-lockfile --prod
 COPY . .
 ENV NODE_ENV=production PORT=10000 JOB_AGENT_DATA=/var/data/orbit
 RUN mkdir -p /var/data/orbit && chown -R node:node /app /var/data
